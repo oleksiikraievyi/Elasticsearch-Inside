@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElasticsearchInside", "ElasticsearchInside\ElasticsearchInside.csproj", "{10914026-5BEF-4407-B9FB-5B6306D81FC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElasticsearchInside.Tests", "ElasticsearchInside.Tests\ElasticsearchInside.Tests.csproj", "{2BF22A5A-26A7-4AC9-9EEF-305F8ED96776}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{10914026-5BEF-4407-B9FB-5B6306D81FC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10914026-5BEF-4407-B9FB-5B6306D81FC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10914026-5BEF-4407-B9FB-5B6306D81FC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10914026-5BEF-4407-B9FB-5B6306D81FC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BF22A5A-26A7-4AC9-9EEF-305F8ED96776}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BF22A5A-26A7-4AC9-9EEF-305F8ED96776}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BF22A5A-26A7-4AC9-9EEF-305F8ED96776}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BF22A5A-26A7-4AC9-9EEF-305F8ED96776}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
