@@ -1,9 +1,10 @@
 ![](https://raw.githubusercontent.com/poulfoged/elasticsearch-inside/master/logo.png) &nbsp; ![](https://ci.appveyor.com/api/projects/status/prwp3j290469ntpb/branch/master?svg=true) &nbsp; ![](http://img.shields.io/nuget/v/elasticsearch-inside.svg?style=flat)#Elasticsearch Inside  
 
-A fully embedded version of [Elasticsearch][Elasticsearch] for integration tests. When the instance is created both the jvm and elasticsearch itself is extracted to a temporary location (2-3 seconds in my tests) and started (5-6 seconds in my tests). Once disposed everything is removed again.
+Many thanks to Daniel Jacob Poulsen who created the first version of this.
 
-The instance will be started on a random port - full url available as Url property.
-## How to
+This is a fully embedded version of [Elasticsearch][Elasticsearch] for integration tests. When the instance is created both the jvm and elasticsearch itself is extracted to a temporary location (2-3 seconds in my tests) and started (5-6 seconds in my tests). Once disposed everything is removed again.
+
+The instance will be started on a random port - full url available as Url property.## How to
 To use elasticsearch in integration tests simply instanciate it - in these tests I'm using the excellent client [Elasticsearch-NEST][nest]:```c#
 using (var elasticsearch = new Elasticsearch())
 {
