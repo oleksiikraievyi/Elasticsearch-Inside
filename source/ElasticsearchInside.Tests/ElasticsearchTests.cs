@@ -45,10 +45,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public void Can_change_configuration()
         {
-            using (var elasticsearch = new Elasticsearch(c => c
-                .Port(444)
-                .EnableLogging()
-                .AddArgument("-Des.script.engine.groovy.file.aggs=on")))
+            using (var elasticsearch = new Elasticsearch(c => c.Port(444).EnableLogging()))
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>elasticsearch-inside</id>
+    <version>$version$</version>
+    <title>Elasticsearch Inside</title>
+    <authors>Monzoom (Poul Foged)</authors>
+    <owners>Monzoom (Poul Foged)</owners>
+    <projectUrl>https://github.com/poulfoged/elasticsearch-inside</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/poulfoged/elasticsearch-inside/master/logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Start Elasticsearch from .NET for integration tests. Contains both java runtime and elasticsearch embedded in the dll.</description>
+    <copyright>Copyright 2015</copyright>
+    <tags>elasticsearch, elastic, integration, tests</tags>
+  </metadata>
+</package>

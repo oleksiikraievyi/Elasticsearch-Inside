@@ -33,7 +33,7 @@ namespace ElasticsearchInside
 
                 return new UriBuilder
                 {
-                    Scheme = "http",
+                    Scheme = Uri.UriSchemeHttp,
                     Host = parameters.NetworkHost,
                     Port = parameters.ElasticsearchPort.Value
                 }.Uri;
