@@ -1,0 +1,433 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LZ4PCL</name>
+    </assembly>
+    <members>
+        <member name="T:LZ4PCL.LZ4Codec">
+            <summary>Unsafe LZ4 codec.</summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Codec.MEMORY_USAGE">
+            <summary>
+                Memory usage formula : N->2^N Bytes (examples : 10 -> 1KB; 12 -> 4KB ; 16 -> 64KB; 20 -> 1MB; etc.)
+                Increasing memory usage improves compression ratio
+                Reduced memory usage can improve speed, due to cache effect
+                Default value is 14, for 16KB, which nicely fits into Intel x86 L1 cache
+            </summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Codec.NOTCOMPRESSIBLE_DETECTIONLEVEL">
+            <summary>
+                Decreasing this value will make the algorithm skip faster data segments considered "incompressible"
+                This may decrease compression ratio dramatically, but will be faster on incompressible data
+                Increasing this value will make the algorithm search more before declaring a segment "incompressible"
+                This could improve compression a bit, but will be slower on incompressible data
+                The default value (6) is recommended
+            </summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Codec.BLOCK_COPY_LIMIT">
+            <summary>
+                Buffer length when Buffer.BlockCopy becomes faster than straight loop.
+                Please note that safe implementation REQUIRES it to be greater (not even equal) than 8.
+            </summary>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.MaximumOutputLength(System.Int32)">
+            <summary>Gets maximum the length of the output.</summary>
+            <param name="inputLength">Length of the input.</param>
+            <returns>Maximum number of bytes needed for compressed buffer.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Encode(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32,System.Int32,System.Boolean)">
+            <summary>
+                Encode a block of input with the LZ4 compression algorithm, 
+                producing compressed output.
+            </summary>
+            <remarks>
+                Self-optimises to use 32 or 64 bit implementation depending on execution environment word size.
+                Will use 'unsafe' implementation also, if LZ4.Portable was compiled in ReleaseUnsafe configuration 
+                (uses an INCLUDE_UNSAFE directive; recommended if at all possible, as performance is much higher).
+            </remarks>
+            <param name="input">Buffer containing data to be compressed.</param>
+            <param name="inputOffset">Offset in <paramref name="input"/> to read from.</param>
+            <param name="inputLength">Number of bytes to compress.</param>
+            <param name="output">Buffer to write compressed data to.</param>
+            <param name="outputOffset">Offset in <paramref name="output"/> to write to.</param>
+            <param name="outputLength">Maximum size of output to generate.</param>
+            <param name="highCompression">If <c>true</c>, use a higher-compression but slower codec variant.</param>
+            <returns>Number of bytes written to <paramref name="output"/> buffer.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Decode(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32,System.Int32,System.Boolean)">
+            <summary>
+                Decode a block of input that was encoded with the LZ4 compression algorithm, 
+                producing decompressed output.
+            </summary>
+            <remarks>
+                Self-optimises to use 32 or 64 bit implementation depending on execution environment word size.
+                Will use 'unsafe' implementation also, if LZ4.Portable was compiled in ReleaseUnsafe configuration 
+                (uses an INCLUDE_UNSAFE directive; recommended if at all possible, as performance is much higher).
+            </remarks>
+            <param name="input">Buffer containing data to be decompressed.</param>
+            <param name="inputOffset">Offset in <paramref name="input"/> to read from.</param>
+            <param name="inputLength">Number of bytes to read for decompressing.</param>
+            <param name="output">Buffer to write decompressed data to.</param>
+            <param name="outputOffset">Offset in <paramref name="output"/> to write to.</param>
+            <param name="outputLength">Maximum size of output allowable.</param>
+            <param name="knownLength">If <c>true</c>, length of the input block is known.</param>
+            <returns>Number of bytes written to <paramref name="output"/> buffer.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.BlockCopy(System.Byte*,System.Byte*,System.Int32)">
+            <summary>Copies block of memory.</summary>
+            <param name="src">The source.</param>
+            <param name="dst">The destination.</param>
+            <param name="len">The length (in bytes).</param>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.BlockFill(System.Byte*,System.Int32,System.Byte)">
+            <summary>Copies block of memory.</summary>
+            <param name="dst">The destination.</param>
+            <param name="len">The length (in bytes).</param>
+            <param name="val">The value.</param>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Encode32(System.Byte*,System.Byte*,System.Int32,System.Int32)">
+            <summary>Encodes the specified input.</summary>
+            <param name="input">The input.</param>
+            <param name="output">The output.</param>
+            <param name="inputLength">Length of the input.</param>
+            <param name="outputLength">Length of the output.</param>
+            <returns>Number of bytes written.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Encode32(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32,System.Int32)">
+            <summary>Encodes the specified input.</summary>
+            <param name="input">The input.</param>
+            <param name="inputOffset">The input offset.</param>
+            <param name="inputLength">Length of the input.</param>
+            <param name="output">The output.</param>
+            <param name="outputOffset">The output offset.</param>
+            <param name="outputLength">Length of the output.</param>
+            <returns>Number of bytes written.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Encode32(System.Byte[],System.Int32,System.Int32)">
+            <summary>Encodes the specified input.</summary>
+            <param name="input">The input.</param>
+            <param name="inputOffset">The input offset.</param>
+            <param name="inputLength">Length of the input.</param>
+            <returns>Compressed buffer.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Decode32(System.Byte*,System.Int32,System.Byte*,System.Int32,System.Boolean)">
+            <summary>Decodes the specified input.</summary>
+            <param name="input">The input.</param>
+            <param name="inputLength">Length of the input.</param>
+            <param name="output">The output.</param>
+            <param name="outputLength">Length of the output.</param>
+            <param name="knownOutputLength">Set it to <c>true</c> if output length is known.</param>
+            <returns>Number of bytes written.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Decode32(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32,System.Int32,System.Boolean)">
+            <summary>Decodes the specified input.</summary>
+            <param name="input">The input.</param>
+            <param name="inputOffset">The input offset.</param>
+            <param name="inputLength">Length of the input.</param>
+            <param name="output">The output.</param>
+            <param name="outputOffset">The output offset.</param>
+            <param name="outputLength">Length of the output.</param>
+            <param name="knownOutputLength">Set it to <c>true</c> if output length is known.</param>
+            <returns>Number of bytes written.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Decode32(System.Byte[],System.Int32,System.Int32,System.Int32)">
+            <summary>Decodes the specified input.</summary>
+            <param name="input">The input.</param>
+            <param name="inputOffset">The input offset.</param>
+            <param name="inputLength">Length of the input.</param>
+            <param name="outputLength">Length of the output.</param>
+            <returns>Decompressed buffer.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Encode64(System.Byte*,System.Byte*,System.Int32,System.Int32)">
+            <summary>Encodes the specified input.</summary>
+            <param name="input">The input.</param>
+            <param name="output">The output.</param>
+            <param name="inputLength">Length of the input.</param>
+            <param name="outputLength">Length of the output.</param>
+            <returns>Number of bytes written.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Encode64(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32,System.Int32)">
+            <summary>Encodes the specified input.</summary>
+            <param name="input">The input.</param>
+            <param name="inputOffset">The input offset.</param>
+            <param name="inputLength">Length of the input.</param>
+            <param name="output">The output.</param>
+            <param name="outputOffset">The output offset.</param>
+            <param name="outputLength">Length of the output.</param>
+            <returns>Number of bytes written.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Encode64(System.Byte[],System.Int32,System.Int32)">
+            <summary>Encodes the specified input.</summary>
+            <param name="input">The input.</param>
+            <param name="inputOffset">The input offset.</param>
+            <param name="inputLength">Length of the input.</param>
+            <returns>Compressed buffer.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Decode64(System.Byte*,System.Int32,System.Byte*,System.Int32,System.Boolean)">
+            <summary>Decodes the specified input.</summary>
+            <param name="input">The input.</param>
+            <param name="inputLength">Length of the input.</param>
+            <param name="output">The output.</param>
+            <param name="outputLength">Length of the output.</param>
+            <param name="knownOutputLength">Set it to <c>true</c> if output length is known.</param>
+            <returns>Number of bytes written.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Decode64(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32,System.Int32,System.Boolean)">
+            <summary>Decode64s the specified input.</summary>
+            <param name="input">The input.</param>
+            <param name="inputOffset">The input offset.</param>
+            <param name="inputLength">Length of the input.</param>
+            <param name="output">The output.</param>
+            <param name="outputOffset">The output offset.</param>
+            <param name="outputLength">Length of the output.</param>
+            <param name="knownOutputLength">Set it to <c>true</c> if output length is known.</param>
+            <returns>Number of bytes written.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Decode64(System.Byte[],System.Int32,System.Int32,System.Int32)">
+            <summary>Decode64s the specified input.</summary>
+            <param name="input">The input.</param>
+            <param name="inputOffset">The input offset.</param>
+            <param name="inputLength">Length of the input.</param>
+            <param name="outputLength">Length of the output.</param>
+            <returns>Decompressed buffer.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Encode32HC(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32,System.Int32)">
+            <summary>Encodes the specified input using HC codec.</summary>
+            <param name="input">The input.</param>
+            <param name="inputOffset">The input offset.</param>
+            <param name="inputLength">Length of the input.</param>
+            <param name="output">The output.</param>
+            <param name="outputOffset">The output offset.</param>
+            <param name="outputLength">Length of the output.</param>
+            <returns>Number of bytes written. NOTE: when output buffer is too small it returns negative value.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Encode32HC(System.Byte[],System.Int32,System.Int32)">
+            <summary>Encodes the specified input using HC codec.</summary>
+            <param name="input">The input.</param>
+            <param name="inputOffset">The input offset.</param>
+            <param name="inputLength">Length of the input.</param>
+            <returns>Buffer with compressed data (NOTE: it can be bigger than input).</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Encode64HC(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32,System.Int32)">
+            <summary>Encodes the specified input using HC codec.</summary>
+            <param name="input">The input.</param>
+            <param name="inputOffset">The input offset.</param>
+            <param name="inputLength">Length of the input.</param>
+            <param name="output">The output.</param>
+            <param name="outputOffset">The output offset.</param>
+            <param name="outputLength">Length of the output.</param>
+            <returns>Number of bytes written. NOTE: when output buffer is too small it returns negative value.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Codec.Encode64HC(System.Byte[],System.Int32,System.Int32)">
+            <summary>Encodes the specified input using HC codec.</summary>
+            <param name="input">The input.</param>
+            <param name="inputOffset">The input offset.</param>
+            <param name="inputLength">Length of the input.</param>
+            <returns>Buffer with compressed data (NOTE: it can be bigger than input).</returns>
+        </member>
+        <member name="T:LZ4PCL.LZ4Stream">
+            <summary>Block compression stream. Allows to use LZ4 for stream compression.</summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Stream._blockSize">
+            <summary>The block size (compression only).</summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Stream._compressionMode">
+            <summary>The compression mode.</summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Stream._closeOnDispose">
+            <summary>Whether to close the inner stream when closing/disposing.</summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Stream._highCompression">
+            <summary>The high compression flag (compression only).</summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Stream._innerStream">
+            <summary>The inner stream.</summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Stream._buffer">
+            <summary>The buffer.</summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Stream._bufferLength">
+            <summary>The buffer length (can be different than _buffer.Length).</summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Stream._bufferOffset">
+            <summary>The offset in a buffer.</summary>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.#ctor(System.IO.Stream,LZ4PCL.CompressionMode,System.Boolean,System.Boolean,System.Int32)">
+            <summary>Initializes a new instance of the <see cref="T:LZ4PCL.LZ4Stream"/> class.</summary>
+            <param name="innerStream">The inner stream.</param>
+            <param name="compressionMode">The compression mode.</param>
+            <param name="closeOnDispose">Whether to close <paramref name="innerStream"/> when closing/disposing.</param>
+            <param name="highCompression">if set to <c>true</c> [high compression].</param>
+            <param name="blockSize">Size of the block.</param>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.NotSupported(System.String)">
+            <summary>Returns NotSupportedException.</summary>
+            <param name="operationName">Name of the operation.</param>
+            <returns>NotSupportedException</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.EndOfStream">
+            <summary>Returns EndOfStreamException.</summary>
+            <returns>EndOfStreamException</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.TryReadVarInt(System.UInt64@)">
+            <summary>Tries to read variable length int.</summary>
+            <param name="result">The result.</param>
+            <returns>
+                <c>true</c> if integer has been read, <c>false</c> if end of stream has been
+                encountered. If end of stream has been encoutered in the middle of value
+                <see cref="T:System.IO.EndOfStreamException"/> is thrown.
+            </returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.ReadVarInt">
+            <summary>
+                Reads the variable length int. Work with assumption that value is in the stream
+                and throws exception if it isn't. If you want to check if value is in the stream
+                use <see cref="M:LZ4PCL.LZ4Stream.TryReadVarInt(System.UInt64@)"/> instead.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.ReadBlock(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+                Reads the block of bytes.
+                Contrary to <see cref="M:System.IO.Stream.Read(System.Byte[],System.Int32,System.Int32)"/> does not read partial data if possible.
+                If there is no data (yet) it waits.
+            </summary>
+            <param name="buffer">The buffer.</param>
+            <param name="offset">The offset.</param>
+            <param name="length">The length.</param>
+            <returns>Number of bytes read.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.WriteVarInt(System.UInt64)">
+            <summary>Writes the variable length integer.</summary>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.FlushCurrentChunk">
+            <summary>Flushes current chunk.</summary>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.AcquireNextChunk">
+            <summary>Reads the next chunk from stream.</summary>
+            <returns>
+                <c>true</c> if next has been read, or <c>false</c> if it is legitimate end of file.
+                Throws <see cref="T:System.IO.EndOfStreamException"/> if end of stream was unexpected.
+            </returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.Flush">
+            <summary>
+                When overridden in a derived class, clears all buffers for this stream and causes any buffered data to be
+                written to the underlying device.
+            </summary>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.ReadByte">
+            <summary>
+                Reads a byte from the stream and advances the position within the stream by one byte, or returns -1 if at the
+                end of the stream.
+            </summary>
+            <returns>The unsigned byte cast to an Int32, or -1 if at the end of the stream.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.Read(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+                When overridden in a derived class, reads a sequence of bytes from the current stream and advances the
+                position within the stream by the number of bytes read.
+            </summary>
+            <param name="buffer">
+                An array of bytes. When this method returns, the buffer contains the specified byte array with the
+                values between <paramref name="offset" /> and (<paramref name="offset" /> + <paramref name="count" /> - 1) replaced
+                by the bytes read from the current source.
+            </param>
+            <param name="offset">
+                The zero-based byte offset in <paramref name="buffer" /> at which to begin storing the data read
+                from the current stream.
+            </param>
+            <param name="count">The maximum number of bytes to be read from the current stream.</param>
+            <returns>
+                The total number of bytes read into the buffer. This can be less than the number of bytes requested if that
+                many bytes are not currently available, or zero (0) if the end of the stream has been reached.
+            </returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.Seek(System.Int64,System.IO.SeekOrigin)">
+            <summary>When overridden in a derived class, sets the position within the current stream.</summary>
+            <param name="offset">A byte offset relative to the <paramref name="origin" /> parameter.</param>
+            <param name="origin">
+                A value of type <see cref="T:System.IO.SeekOrigin" /> indicating the reference point used to
+                obtain the new position.
+            </param>
+            <returns>The new position within the current stream.</returns>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.SetLength(System.Int64)">
+            <summary>When overridden in a derived class, sets the length of the current stream.</summary>
+            <param name="value">The desired length of the current stream in bytes.</param>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.WriteByte(System.Byte)">
+            <summary>Writes a byte to the current position in the stream and advances the position within the stream by one byte.</summary>
+            <param name="value">The byte to write to the stream.</param>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.Write(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+                When overridden in a derived class, writes a sequence of bytes to the current stream and advances the current
+                position within this stream by the number of bytes written.
+            </summary>
+            <param name="buffer">
+                An array of bytes. This method copies <paramref name="count" /> bytes from
+                <paramref name="buffer" /> to the current stream.
+            </param>
+            <param name="offset">
+                The zero-based byte offset in <paramref name="buffer" /> at which to begin copying bytes to the
+                current stream.
+            </param>
+            <param name="count">The number of bytes to be written to the current stream.</param>
+        </member>
+        <member name="M:LZ4PCL.LZ4Stream.Dispose(System.Boolean)">
+            <summary>
+                Releases the unmanaged resources used by the <see cref="T:System.IO.Stream" /> and optionally releases the
+                managed resources.
+            </summary>
+            <param name="disposing">
+                true to release both managed and unmanaged resources; false to release only unmanaged
+                resources.
+            </param>
+        </member>
+        <member name="P:LZ4PCL.LZ4Stream.CanRead">
+            <summary>When overridden in a derived class, gets a value indicating whether the current stream supports reading.</summary>
+            <returns>true if the stream supports reading; otherwise, false.</returns>
+        </member>
+        <member name="P:LZ4PCL.LZ4Stream.CanSeek">
+            <summary>When overridden in a derived class, gets a value indicating whether the current stream supports seeking.</summary>
+            <returns>true if the stream supports seeking; otherwise, false.</returns>
+        </member>
+        <member name="P:LZ4PCL.LZ4Stream.CanWrite">
+            <summary>When overridden in a derived class, gets a value indicating whether the current stream supports writing.</summary>
+            <returns>true if the stream supports writing; otherwise, false.</returns>
+        </member>
+        <member name="P:LZ4PCL.LZ4Stream.Length">
+            <summary>When overridden in a derived class, gets the length in bytes of the stream.</summary>
+            <returns>A long value representing the length of the stream in bytes.</returns>
+        </member>
+        <member name="P:LZ4PCL.LZ4Stream.Position">
+            <summary>When overridden in a derived class, gets or sets the position within the current stream.</summary>
+            <returns>The current position within the stream.</returns>
+        </member>
+        <member name="T:LZ4PCL.LZ4Stream.ChunkFlags">
+            <summary>
+                Flags of a chunk. Please note, this
+            </summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Stream.ChunkFlags.None">
+            <summary>None.</summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Stream.ChunkFlags.Compressed">
+            <summary>Set if chunk is compressed.</summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Stream.ChunkFlags.HighCompression">
+            <summary>
+                Set if high compression has been selected (does not affect decoder,
+                but might be useful when rewriting)
+            </summary>
+        </member>
+        <member name="F:LZ4PCL.LZ4Stream.ChunkFlags.Passes">
+            <summary>
+                3 bits for number of passes. Currently only 1 pass (value 0)
+                is supported.
+            </summary>
+        </member>
+    </members>
+</doc>

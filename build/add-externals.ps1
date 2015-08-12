@@ -102,5 +102,5 @@ Write-Host "Encoding file " $elasticDir.Fullname
 .\tools\LZ4Encoder.exe $elasticDir.Fullname ..\source\ElasticsearchInside\Executables\elasticsearch.lz4
 
 
-Remove-Item temp -recurse
+Remove-Item temp -Force -Recurse 
 

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LZ4PCL;
 using CompressionMode = LZ4PCL.CompressionMode;
 
@@ -27,30 +23,18 @@ namespace LZ4Encoder
             if (destination.Exists)
                 throw new ApplicationException("Destination already exists");
 
+            // mem-stream needs to be here for this to work?
             using (var destinationStream = destination.OpenWrite())
             using (var memStream = new MemoryStream())
             using (var lz4Stream = new LZ4Stream(destinationStream, CompressionMode.Compress, true, true))
             {
                 using (var zipArchive = new ZipArchive(memStream, ZipArchiveMode.Create, true))
-                {
+                
                     AddFilesToArchive(source, "", zipArchive);
-                    
-                }
+
                 memStream.Position = 0;
                 memStream.CopyTo(lz4Stream);
-
             }
-            
-            
-            //zipArchive.CreateEntry()
-
-
-
-
-            //using (var source = File.OpenRead(@"z:\data\projects\Embedded Elasticsearch\Embedded Elasticsearch\Executables\elasticsearch.zip"))
-            //using (var dest = File.OpenWrite(@"z:\data\projects\Embedded Elasticsearch\Embedded Elasticsearch\Executables\elasticsearch.lz4"))
-            //
-            //    source.CopyTo(compressed);
         }
 
         private static void AddFilesToArchive(DirectoryInfo source, string path, ZipArchive zipArchive)
