@@ -69,15 +69,5 @@ namespace ElasticsearchInside.Tests
                 Assert.That(logged);
             }
         }
-
-        [Test, Ignore("Will be moved to external tool later")]
-        public void Compress()
-        {
-            using (var source = File.OpenRead(@"z:\data\projects\Embedded Elasticsearch\Embedded Elasticsearch\Executables\elasticsearch.zip"))
-            using (var dest = File.OpenWrite(@"z:\data\projects\Embedded Elasticsearch\Embedded Elasticsearch\Executables\elasticsearch.lz4"))
-            using (var compressed = new LZ4Stream(dest, CompressionMode.Compress, true, true))
-                source.CopyTo(compressed);
-        }
-
     }
 }
