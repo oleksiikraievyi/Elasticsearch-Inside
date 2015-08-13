@@ -14,8 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C7885E
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LZ4Encoder", "..\build\tools\LZ4-encoder\LZ4Encoder\LZ4Encoder.csproj", "{4DB47F6F-7545-4AC6-8C5B-F470B09EDE2F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,10 +28,6 @@ Global
 		{2BF22A5A-26A7-4AC9-9EEF-305F8ED96776}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BF22A5A-26A7-4AC9-9EEF-305F8ED96776}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BF22A5A-26A7-4AC9-9EEF-305F8ED96776}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4DB47F6F-7545-4AC6-8C5B-F470B09EDE2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4DB47F6F-7545-4AC6-8C5B-F470B09EDE2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4DB47F6F-7545-4AC6-8C5B-F470B09EDE2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4DB47F6F-7545-4AC6-8C5B-F470B09EDE2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
