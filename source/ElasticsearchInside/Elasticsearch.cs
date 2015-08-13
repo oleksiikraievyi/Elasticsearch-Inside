@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +24,21 @@ namespace ElasticsearchInside
         private ElasticsearchParameters parameters = new ElasticsearchParameters();
         private CommandLineBuilder _commandLineBuilder = new CommandLineBuilder();
         private Stopwatch startup;
+
+
+        static Elasticsearch()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += (s, e) =>
+            {
+                using (var memStream = new MemoryStream())
+                {
+                    using (var stream = typeof(Elasticsearch).Assembly.GetManifestResourceStream(typeof(RessourceTarget), "LZ4PCL.dll"))
+                        stream.CopyTo(memStream);
+
+                    return Assembly.Load(memStream.GetBuffer());
+                }
+            };
+        }
 
         public Uri Url
         {
@@ -170,7 +186,5 @@ namespace ElasticsearchInside
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-        
     }
 }

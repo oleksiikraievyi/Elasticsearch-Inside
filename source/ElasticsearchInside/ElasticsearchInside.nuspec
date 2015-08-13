@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>elasticsearch-inside</id>
-    <version>$version$</version>
+    <version>1.0.2.0</version>
     <title>Elasticsearch Inside</title>
     <authors>Monzoom (Poul Foged)</authors>
     <owners>Monzoom (Poul Foged)</owners>
@@ -12,5 +12,10 @@
     <description>Start Elasticsearch from .NET for integration tests. Contains both java runtime and elasticsearch embedded in the dll.</description>
     <copyright>Copyright 2015</copyright>
     <tags>elasticsearch, elastic, integration, tests</tags>
+    <releaseNotes>
+1.0.2 Embedded LZ4PCL.dll to avoid NuGet reference
+1.0.1 Updated to Java Runtime 8u51
+1.0.0 Initial release
+    </releaseNotes>
   </metadata>
 </package>

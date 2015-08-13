@@ -32,8 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LZ4PCL">
+    <Reference Include="LZ4PCL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\LZ4PCL.1.0.0\lib\portable-net4+netcore45+wpa81+MonoAndroid1+MonoTouch1\LZ4PCL.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -62,7 +64,9 @@
     <None Include="app.config" />
     <EmbeddedResource Include="Executables\jre.lz4" />
     <EmbeddedResource Include="Executables\elasticsearch.lz4" />
-    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Executables\LZ4PCL.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
