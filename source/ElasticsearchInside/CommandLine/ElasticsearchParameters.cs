@@ -118,9 +118,10 @@ namespace ElasticsearchInside.CommandLine
 
        
 
-        public IElasticsearchParameters HeapSize(int heapsizeInBytes)
+        public IElasticsearchParameters HeapSize(int initialHeapsizeMB = 128, int maximumHeapsizeMB = 128)
         {
-            InitialHeapSize = heapsizeInBytes;
+            InitialHeapSize = initialHeapsizeMB;
+            MaximumHeapSize = maximumHeapsizeMB;
             return this;
         }
 

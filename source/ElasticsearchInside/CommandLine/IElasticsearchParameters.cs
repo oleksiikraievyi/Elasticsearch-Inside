@@ -4,7 +4,7 @@ namespace ElasticsearchInside.CommandLine
 {
     public interface IElasticsearchParameters
     {
-        IElasticsearchParameters HeapSize(int heapsizeInBytes);
+        IElasticsearchParameters HeapSize(int initialHeapsizeMB = 128, int maximumHeapsizeMB = 128);
 
         IElasticsearchParameters Port(int port);
 

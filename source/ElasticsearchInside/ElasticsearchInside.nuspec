@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>elasticsearch-inside</id>
-    <version>1.0.2.0</version>
+    <version>1.0.3.0</version>
     <title>Elasticsearch Inside</title>
     <authors>Monzoom (Poul Foged)</authors>
     <owners>Monzoom (Poul Foged)</owners>
@@ -13,6 +13,7 @@
     <copyright>Copyright 2015</copyright>
     <tags>elasticsearch, elastic, integration, tests</tags>
     <releaseNotes>
+1.0.3 Initial and Maximum heapsize can now be configured
 1.0.2 Embedded LZ4PCL.dll to avoid NuGet reference
 1.0.1 Updated to Java Runtime 8u51
 1.0.0 Initial release
