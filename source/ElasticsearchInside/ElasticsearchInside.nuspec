@@ -13,11 +13,11 @@
     <copyright>Copyright 2015</copyright>
     <tags>elasticsearch, elastic, integration, tests</tags>
     <releaseNotes>
-1.7.1 Updated to Java Runtime 8u60
-1.0.3 Initial and Maximum heapsize can now be configured
-1.0.2 Embedded LZ4PCL.dll to avoid NuGet reference
-1.0.1 Updated to Java Runtime 8u51
-1.0.0 Initial release
+1.7.1.0 Updated to Java Runtime 8u60
+1.0.3.0 Initial and Maximum heapsize can now be configured
+1.0.2.0 Embedded LZ4PCL.dll to avoid NuGet reference
+1.0.1.0 Updated to Java Runtime 8u51
+1.0.0.0 Initial release
     </releaseNotes>
   </metadata>
 </package>
