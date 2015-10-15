@@ -63,7 +63,9 @@
     <None Include="app.config" />
     <EmbeddedResource Include="Executables\jre.lz4" />
     <EmbeddedResource Include="Executables\elasticsearch.lz4" />
-    <None Include="ElasticsearchInside.nuspec" />
+    <None Include="ElasticsearchInside.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
