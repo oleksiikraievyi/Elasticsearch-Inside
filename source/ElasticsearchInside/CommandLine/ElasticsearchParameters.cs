@@ -62,9 +62,6 @@ namespace ElasticsearchInside.CommandLine
         [FormattedArgument("-Des.http.port={0}", 1234)]
         public int? ElasticsearchPort { get; set; }
 
-        [FormattedArgument("-Des.index.store.type={0}", IndexStoreType.Memory)]
-        public IndexStoreType IndexStoreType { get; set; }
-
         [FormattedArgument("-Des.node.name={0}", "integrationtest_node")]
         public string EsNodeName { get; set; }
 
