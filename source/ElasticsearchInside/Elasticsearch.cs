@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -9,8 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using ElasticsearchInside.CommandLine;
 using ElasticsearchInside.Executables;
+using ElasticsearchInside.Utilities.Archive;
 using LZ4PCL;
-using CompressionMode = LZ4PCL.CompressionMode;
 
 namespace ElasticsearchInside
 {
@@ -18,12 +17,12 @@ namespace ElasticsearchInside
     {
         private Process _elasticSearchProcess;
         private bool _disposed;
-        private DirectoryInfo temporaryRootFolder = new DirectoryInfo(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N")));
+        private readonly DirectoryInfo temporaryRootFolder = new DirectoryInfo(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N")));
         private DirectoryInfo ElasticsearchHome { get; set; }
         private DirectoryInfo JavaHome { get; set; }
-        private ElasticsearchParameters parameters = new ElasticsearchParameters();
-        private CommandLineBuilder _commandLineBuilder = new CommandLineBuilder();
-        private Stopwatch startup;
+        private readonly ElasticsearchParameters parameters = new ElasticsearchParameters();
+        private readonly CommandLineBuilder _commandLineBuilder = new CommandLineBuilder();
+        private readonly Stopwatch startup;
 
 
         static Elasticsearch()
@@ -150,9 +149,9 @@ namespace ElasticsearchInside
 
             using (var stream = GetType().Assembly.GetManifestResourceStream(typeof(RessourceTarget), name))
             using (var decompresStream = new LZ4Stream(stream, CompressionMode.Decompress))
-            using (var zipArchive = new ZipArchive(decompresStream, ZipArchiveMode.Read))
-                zipArchive.ExtractToDirectory(destination.FullName);
-
+            using (var archiveReader = new ArchiveReader(decompresStream))
+                archiveReader.ExtractToDirectory(destination);
+           
             Info("Extracted {0} in {1} seconds", name, started.Elapsed.TotalSeconds);
         }
 

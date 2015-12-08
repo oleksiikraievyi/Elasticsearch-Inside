@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using LZ4Encoder.Utilities;
 using LZ4PCL;
 using CompressionMode = LZ4PCL.CompressionMode;
 
@@ -28,9 +29,8 @@ namespace LZ4Encoder
             using (var memStream = new MemoryStream())
             using (var lz4Stream = new LZ4Stream(destinationStream, CompressionMode.Compress, true, true))
             {
-                using (var zipArchive = new ZipArchive(memStream, ZipArchiveMode.Create, true))
-                
-                    AddFilesToArchive(source, "", zipArchive);
+                using (var archiveWriter = new ArchiveWriter(memStream, true))
+                    archiveWriter.AddFiles(source);
 
                 memStream.Position = 0;
                 memStream.CopyTo(lz4Stream);
