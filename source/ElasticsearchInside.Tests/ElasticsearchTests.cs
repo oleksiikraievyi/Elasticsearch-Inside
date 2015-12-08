@@ -34,10 +34,10 @@ namespace ElasticsearchInside.Tests
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
                 ////Act
-                client.Index(new { id = "tester"}, i => i.Index("test-index"));
+                client.Index(new { id = "tester" }, i => i.Index("test-index").Type("test-type"));
 
                 ////Assert
-                var result = client.Get<dynamic>("tester", "test-index");
+                var result = client.Get<dynamic>("tester", "test-index", "test-type");
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Found);
             }
