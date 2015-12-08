@@ -39,6 +39,7 @@ namespace ElasticsearchInside.Tests
                 ////Assert
                 var result = client.Get<dynamic>("tester", "test-index");
                 Assert.That(result, Is.Not.Null);
+                Assert.That(result.Found);
             }
         }
 
