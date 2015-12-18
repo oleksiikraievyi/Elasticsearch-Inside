@@ -1,6 +1,4 @@
-﻿using System.IO;
-using LZ4PCL;
-using Nest;
+﻿using Nest;
 using NUnit.Framework;
 
 namespace ElasticsearchInside.Tests
