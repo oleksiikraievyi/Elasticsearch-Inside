@@ -58,7 +58,6 @@
   <ItemGroup>
     <Compile Include="CommandLine\CommandLineBuilderTests.cs" />
     <Compile Include="ElasticsearchTests.cs" />
-    <Compile Include="FileTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Archive\ArchiveReaderWriterTests.cs" />
   </ItemGroup>
