@@ -68,7 +68,9 @@
     <None Include="ElasticsearchInside.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Executables\LZ4PCL.dll" />

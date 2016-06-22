@@ -19,7 +19,7 @@ function DownloadElasticsearch {
 
     $url = $doc.DocumentNode.SelectSingleNode("//a[starts-with(@class, 'zip-link')]");
 
-    $downloadUrl =  New-Object System.Uri -ArgumentList @($url.Attributes["href"].Value)
+    $downloadUrl = "https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/zip/elasticsearch/2.3.2/elasticsearch-2.3.2.zip" # New-Object System.Uri -ArgumentList @($url.Attributes["href"].Value)
     
     Write-Host "Downloading " $downloadUrl
 
