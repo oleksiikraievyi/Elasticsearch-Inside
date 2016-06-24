@@ -82,9 +82,10 @@ namespace ElasticsearchInside
 
         private void SetupEnvironment()
         {
-            parameters.EsHomePath = temporaryRootFolder;
             JavaHome = new DirectoryInfo(Path.Combine(temporaryRootFolder.FullName, "jre"));
             ElasticsearchHome = new DirectoryInfo(Path.Combine(temporaryRootFolder.FullName, "es"));
+            parameters.EsHomePath = ElasticsearchHome;
+            
 
             var jreTask = Task.Run(() => ExtractEmbeddedLz4Stream("jre.lz4", JavaHome));
             var esTask = Task.Run(() => ExtractEmbeddedLz4Stream("elasticsearch.lz4", ElasticsearchHome));
@@ -136,6 +137,11 @@ namespace ElasticsearchInside
                 RedirectStandardOutput = true,
                 StandardOutputEncoding = Encoding.ASCII,
             };
+
+            Info("Folder {0}", processStartInfo.WorkingDirectory);
+            Info("Starting {0}", processStartInfo.FileName);
+            Info("Arguments {0}", processStartInfo.Arguments);
+
 
             _elasticSearchProcess = Process.Start(processStartInfo);
             _elasticSearchProcess.ErrorDataReceived += (sender, eventargs) => Info(eventargs.Data);

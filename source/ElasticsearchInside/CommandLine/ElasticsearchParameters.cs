@@ -26,26 +26,26 @@ namespace ElasticsearchInside.CommandLine
         [FormattedArgument("-Xmx{0}m", 128)]
         public int? MaximumHeapSize { get; set; }
 
-        [FormattedArgument("-Djava.awt.headless={0}", true)]
-        public bool Headless { get; set; }
+        [FormattedArgument("-Djava.awt.headless={0}", "true")]
+        public BooleanParameter Headless { get; set; }
 
         [BooleanArgument("-XX:+UseParNewGC", true)]
-        public bool EnableAParallelYoungGenerationGCwithTheConcurrentGC { get; set; }
+        public BooleanParameter EnableAParallelYoungGenerationGCwithTheConcurrentGC { get; set; }
 
         [BooleanArgument("-XX:+UseConcMarkSweepGC", true)]
-        public bool UseConcurrentMarkSweepGC { get; set; }
+        public BooleanParameter UseConcurrentMarkSweepGC { get; set; }
 
         [FormattedArgument("-XX:CMSInitiatingOccupancyFraction={0}", 75)]
         public int? CMSInitiatingOccupancyFraction { get; set; }
 
         [BooleanArgument("-XX:+UseCMSInitiatingOccupancyOnly", true)]
-        public bool UseCMSInitiatingOccupancyOnly { get; set; }
+        public BooleanParameter UseCMSInitiatingOccupancyOnly { get; set; }
 
         [BooleanArgument("-XX:+HeapDumpOnOutOfMemoryError", true)]
-        public bool HeapDumpOnOutOfMemoryError { get; set; }
+        public BooleanParameter HeapDumpOnOutOfMemoryError { get; set; }
 
         [BooleanArgument("-XX:+DisableExplicitGC", true)]
-        public bool DisableExplicitGC { get; set; }
+        public BooleanParameter DisableExplicitGC { get; set; }
 
         [FormattedArgument("-Dfile.encoding={0}", "UTF-8")]
         public string FileEncoding { get; set; }
@@ -53,7 +53,7 @@ namespace ElasticsearchInside.CommandLine
         [BooleanArgument("-Delasticsearch", true)]
         internal string Elasticsearch { get; set; }
 
-        [FormattedArgument("-Des-foreground={0}", true)]
+        [FormattedArgument("-Des-foreground={0}", "yes")]
         public YesNoParameter EsForeground { get; set; }
 
         [FormattedArgument("-Des.path.home=\"{0}\"")]
@@ -68,35 +68,20 @@ namespace ElasticsearchInside.CommandLine
         [FormattedArgument("-Des.path.conf={0}", "config")]
         public DirectoryInfo ConfigPath { get; set; }
 
-        [FormattedArgument("-Des.script.inline={0}", true)]
+        [FormattedArgument("-Des.script.inline={0}", "true")]
         public OnOffParameter ElasticsearchScriptInline { get; set; }
 
-        [FormattedArgument("-Des.script.indexed={0}", true)]
+        [FormattedArgument("-Des.script.indexed={0}", "true")]
         public OnOffParameter ElasticsearchScriptIndexed { get; set; }
 
-        [FormattedArgument("-Des.script.file={0}", true)]
+        [FormattedArgument("-Des.script.file={0}", "true")]
         public OnOffParameter ElasticsearchScriptFile { get; set; }
 
-        [FormattedArgument("-Des.discovery.zen.ping.multicast.enabled={0}", false)]
-        public bool ZenPingMulticastEnabled { get; set; }
-
-        //[FormattedArgument("-Des.index.gateway.type={0}", "none")]
-        //public string IndexGatewayType { get; set; }
-
-        //[FormattedArgument("-Des.gateway.type={0}", "none")]
-        //public string GatewayType { get; set; }
-
-        [FormattedArgument("-Des.index.number_of_shards={0}", 1)]
-        public int? IndexNumberOfShards { get; set; }
-
-        [FormattedArgument("-Des.index.number_of_replicas={0}", 0)]
-        public int? IndexNumberOfReplicas { get; set; }
-
-        [FormattedArgument("-Des.node.local={0}", true)]
-        public bool EsNodeLocal { get; set; }
-
-        //[FormattedArgument("-Des.gateway.type={0}", "local")]
-        //public string Gateway { get; set; }
+        [FormattedArgument("-Des.discovery.zen.minimum_master_nodes={0}", 1)]
+        public int MinimumMasterNodes { get; set; }
+        
+        [FormattedArgument("-Des.node.local={0}", "true")]
+        public OnOffParameter EsNodeLocal { get; set; }
 
         [FormattedArgument("-Des.cluster.name=integrationtest_{0}", "tester")]
         public string Clustername { get; set; }
@@ -116,8 +101,6 @@ namespace ElasticsearchInside.CommandLine
         [BooleanArgument("\"org.elasticsearch.bootstrap.Elasticsearch\"", true)]
         internal object JarFile { get; set; }
 
-        [BooleanArgument("start", true)]
-        internal object ESArgument { get; set; }
 
         public IElasticsearchParameters HeapSize(int initialHeapsizeMB = 128, int maximumHeapsizeMB = 128)
         {

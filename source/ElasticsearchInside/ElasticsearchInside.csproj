@@ -53,6 +53,7 @@
     <Compile Include="CommandLine\ElasticsearchParameters.cs" />
     <Compile Include="CommandLine\IElasticsearchParameters.cs" />
     <Compile Include="CommandLine\IndexStoreType.cs" />
+    <Compile Include="CommandLine\BooleanParameter.cs" />
     <Compile Include="CommandLine\YesNoParameter.cs" />
     <Compile Include="CommandLine\OnOffParameter.cs" />
     <Compile Include="Elasticsearch.cs" />
