@@ -96,9 +96,10 @@ namespace ElasticsearchInside
                 proc.StartInfo.RedirectStandardError = true;
                 proc.OutputDataReceived += (sender, args) => Trace.WriteLine(plugin.Name + ": " + args.Data);
                 proc.StartInfo.Arguments = plugin.GetInstallCommand();
+                proc.StartInfo.EnvironmentVariables.Add("JAVA_HOME", JavaHome.FullName);
 
                 Info("Installing plugin " + plugin.Name + "...");
-                Info(proc.StartInfo.FileName);
+                Info("    " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
                 proc.Start();
                 proc.BeginOutputReadLine();
                 Info("Waiting for plugin " + plugin.Name + " install...");
