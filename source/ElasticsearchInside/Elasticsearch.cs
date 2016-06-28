@@ -96,7 +96,15 @@ namespace ElasticsearchInside
                 proc.StartInfo.RedirectStandardError = true;
                 proc.OutputDataReceived += (sender, args) => Trace.WriteLine(plugin.Name + ": " + args.Data);
                 proc.StartInfo.Arguments = plugin.GetInstallCommand();
-                proc.StartInfo.EnvironmentVariables.Add("JAVA_HOME", JavaHome.FullName);
+
+                // set JAVA_HOME to use the packaged JRE
+                const string JAVA_HOME = "JAVA_HOME";
+                if (proc.StartInfo.EnvironmentVariables.ContainsKey(JAVA_HOME))
+                {
+                    Info("Removing old JAVA_HOME and replacing with bundled JRE.");
+                    proc.StartInfo.EnvironmentVariables.Remove(JAVA_HOME);
+                }
+                proc.StartInfo.EnvironmentVariables.Add(JAVA_HOME, JavaHome.FullName);
 
                 Info("Installing plugin " + plugin.Name + "...");
                 Info("    " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
