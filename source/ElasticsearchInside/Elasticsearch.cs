@@ -123,6 +123,7 @@ namespace ElasticsearchInside
             Info("Started in {0} seconds", startup.Elapsed.TotalSeconds);
         }
 
+
         private void StartProcess()
         {
             var processStartInfo = new ProcessStartInfo(string.Format(@"""{0}""", Path.Combine(JavaHome.FullName, "bin/java.exe")))
