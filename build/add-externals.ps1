@@ -20,7 +20,7 @@ function DownloadElasticsearch {
     $url = $doc.DocumentNode.SelectSingleNode("//a[starts-with(@class, 'zip-link')]");
 
     # change this line to download a specific version
-    $downloadUrl = "https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/zip/elasticsearch/5.0.0-alpha1/elasticsearch-5.0.0-alpha1.zip" #New-Object System.Uri -ArgumentList @($url.Attributes["href"].Value)
+    $downloadUrl = "https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/zip/elasticsearch/5.0.0-alpha2/elasticsearch-5.0.0-alpha2.zip" # New-Object System.Uri -ArgumentList @($url.Attributes["href"].Value)
     
     Write-Host "Downloading " $downloadUrl
 
@@ -30,7 +30,7 @@ function DownloadElasticsearch {
     Invoke-WebRequest $downloadUrl -UseBasicParsing -UseDefaultCredentials -WebSession $s -OutFile .\temp\es.zip
     $ProgressPreference = $bak
     Write-Host "done." -ForegroundColor Green
-
+	
     Write-Host "Extracting Elasticsearch..."
 
 

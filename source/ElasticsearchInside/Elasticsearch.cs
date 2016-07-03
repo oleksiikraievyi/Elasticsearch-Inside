@@ -85,7 +85,7 @@ namespace ElasticsearchInside
             JavaHome = new DirectoryInfo(Path.Combine(temporaryRootFolder.FullName, "jre"));
             ElasticsearchHome = new DirectoryInfo(Path.Combine(temporaryRootFolder.FullName, "es"));
             parameters.EsHomePath = ElasticsearchHome;
-            
+
 
             var jreTask = Task.Run(() => ExtractEmbeddedLz4Stream("jre.lz4", JavaHome));
             var esTask = Task.Run(() => ExtractEmbeddedLz4Stream("elasticsearch.lz4", ElasticsearchHome));
@@ -147,6 +147,15 @@ namespace ElasticsearchInside
             _elasticSearchProcess.ErrorDataReceived += (sender, eventargs) => Info(eventargs.Data);
             _elasticSearchProcess.OutputDataReceived += (sender, eventargs) => Info(eventargs.Data);
             _elasticSearchProcess.BeginOutputReadLine();
+        }
+
+        public void Restart()
+        {
+            _elasticSearchProcess.Kill();
+            _elasticSearchProcess.WaitForExit();
+
+            StartProcess();
+            WaitForGreen();
         }
 
         private void ExtractEmbeddedLz4Stream(string name, DirectoryInfo destination)

@@ -68,12 +68,6 @@ namespace ElasticsearchInside.CommandLine
         [FormattedArgument("-Des.path.conf={0}", "config")]
         public DirectoryInfo ConfigPath { get; set; }
 
-        [FormattedArgument("-Des.script.inline={0}", "true")]
-        public OnOffParameter ElasticsearchScriptInline { get; set; }
-
-        [FormattedArgument("-Des.script.indexed={0}", "true")]
-        public OnOffParameter ElasticsearchScriptIndexed { get; set; }
-
         [FormattedArgument("-Des.script.file={0}", "true")]
         public OnOffParameter ElasticsearchScriptFile { get; set; }
 
