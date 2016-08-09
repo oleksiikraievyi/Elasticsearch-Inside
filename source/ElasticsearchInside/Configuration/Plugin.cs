@@ -30,9 +30,9 @@
         {
             if (Url != null)
             {
-                return "install \"" + Name + "\" -url \"" + Url + "\"";
+                return $"install \"{Url}\"";
             }
-            return "install \"" + Name + "\"";
+            return $"install \"{Name}\"";
         }
     }
 }
