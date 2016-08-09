@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ElasticsearchInside.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -116,6 +117,8 @@ namespace ElasticsearchInside.CommandLine
         [BooleanArgument("\"org.elasticsearch.bootstrap.Elasticsearch\"", true)]
         internal object JarFile { get; set; }
 
+        internal List<Plugin> Plugins { get; } = new List<Plugin>();
+
         [BooleanArgument("start", true)]
         internal object ESArgument { get; set; }
 
@@ -156,6 +159,12 @@ namespace ElasticsearchInside.CommandLine
         public IElasticsearchParameters AddArgument(string argument)
         {
             _customCommandlineArguments.Add(argument);
+            return this;
+        }
+
+        public IElasticsearchParameters AddPlugin(Plugin plugin)
+        {
+            Plugins.Add(plugin);
             return this;
         }
     }

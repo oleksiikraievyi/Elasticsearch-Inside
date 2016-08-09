@@ -10,6 +10,8 @@ using ElasticsearchInside.CommandLine;
 using ElasticsearchInside.Executables;
 using ElasticsearchInside.Utilities.Archive;
 using LZ4PCL;
+using CompressionMode = LZ4PCL.CompressionMode;
+using ElasticsearchInside.Configuration;
 
 namespace ElasticsearchInside
 {
@@ -78,6 +80,42 @@ namespace ElasticsearchInside
 
             StartProcess();
             WaitForGreen();
+
+            InstallPlugins();
+        }
+
+        private void InstallPlugins()
+        {
+            foreach (Plugin plugin in parameters.Plugins)
+            {
+                Process proc = new Process();
+                proc.StartInfo.FileName = Path.Combine(ElasticsearchHome.FullName, "bin\\plugin.bat");
+                proc.StartInfo.WorkingDirectory = Path.Combine(ElasticsearchHome.FullName, "bin");
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.OutputDataReceived += (sender, args) => Trace.WriteLine(plugin.Name + ": " + args.Data);
+                proc.StartInfo.Arguments = plugin.GetInstallCommand();
+
+                // set JAVA_HOME to use the packaged JRE
+                const string JAVA_HOME = "JAVA_HOME";
+                if (proc.StartInfo.EnvironmentVariables.ContainsKey(JAVA_HOME))
+                {
+                    Info("Removing old JAVA_HOME and replacing with bundled JRE.");
+                    proc.StartInfo.EnvironmentVariables.Remove(JAVA_HOME);
+                }
+                proc.StartInfo.EnvironmentVariables.Add(JAVA_HOME, JavaHome.FullName);
+
+                Info("Installing plugin " + plugin.Name + "...");
+                Info("    " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
+                proc.Start();
+                proc.BeginOutputReadLine();
+                Info("Waiting for plugin " + plugin.Name + " install...");
+                proc.WaitForExit();
+                Info("Plugin " + plugin.Name + " installed.");
+
+                Restart();
+            }
         }
 
         private void SetupEnvironment()
@@ -96,10 +134,10 @@ namespace ElasticsearchInside
         private void WaitForGreen()
         {
             var statusUrl = new UriBuilder(Url)
-                            {
-                                Path = "_cluster/health",
-                                Query = "wait_for_status=yellow"
-                            }.Uri;
+            {
+                Path = "_cluster/health",
+                Query = "wait_for_status=yellow"
+            }.Uri;
 
             var statusCode = (HttpStatusCode)0;
             do
@@ -174,14 +212,14 @@ namespace ElasticsearchInside
                 _elasticSearchProcess.Kill();
                 _elasticSearchProcess.WaitForExit();
                 temporaryRootFolder.Delete(true);
-            
+
             }
             catch (Exception ex)
             {
                 Info(ex.ToString());
             }
             _disposed = true;
-            
+
         }
 
         ~Elasticsearch()

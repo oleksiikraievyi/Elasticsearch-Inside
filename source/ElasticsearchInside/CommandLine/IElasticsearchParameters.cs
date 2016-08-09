@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ElasticsearchInside.Configuration;
+using System;
 
 namespace ElasticsearchInside.CommandLine
 {
@@ -13,6 +14,8 @@ namespace ElasticsearchInside.CommandLine
         IElasticsearchParameters LogTo(Action<string, object[]> logger);
 
         IElasticsearchParameters AddArgument(string argument);
+
+        IElasticsearchParameters AddPlugin(Plugin plugin);
 
     }
 }

@@ -55,6 +55,7 @@
     <Compile Include="CommandLine\IndexStoreType.cs" />
     <Compile Include="CommandLine\YesNoParameter.cs" />
     <Compile Include="CommandLine\OnOffParameter.cs" />
+    <Compile Include="Configuration\Plugin.cs" />
     <Compile Include="Elasticsearch.cs" />
     <Compile Include="Executables\RessourceTarget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
