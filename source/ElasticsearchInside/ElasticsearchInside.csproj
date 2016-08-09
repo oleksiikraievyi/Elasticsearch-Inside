@@ -59,6 +59,8 @@
     <Compile Include="Elasticsearch.cs" />
     <Compile Include="Executables\RessourceTarget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\Archive\ArchiveReader.cs" />
+    <Compile Include="Utilities\Archive\ArchiveWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -67,7 +69,9 @@
     <None Include="ElasticsearchInside.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Executables\LZ4PCL.dll" />
