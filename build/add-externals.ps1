@@ -1,6 +1,7 @@
 Push-Location $PSScriptRoot
 
-Add-Type -Path .\tools\HtmlAgilityPack.dll
+[System.Reflection.Assembly]::UnsafeLoadFrom("e:\github\Elasticsearch-Inside\build\tools\HtmlAgilityPack.dll ")
+# Add-Type -Path .\tools\HtmlAgilityPack.dll
 
 $tempDir = ".\temp"
 
@@ -20,7 +21,7 @@ function DownloadElasticsearch {
     $url = $doc.DocumentNode.SelectSingleNode("//a[starts-with(@class, 'zip-link')]");
 
     # change this line to download a specific version
-    $downloadUrl = New-Object System.Uri -ArgumentList @($url.Attributes["href"].Value)
+    $downloadUrl = "https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/zip/elasticsearch/2.4.0/elasticsearch-2.4.0.zip" # New-Object System.Uri -ArgumentList @($url.Attributes["href"].Value)
     
     Write-Host "Downloading " $downloadUrl
 
