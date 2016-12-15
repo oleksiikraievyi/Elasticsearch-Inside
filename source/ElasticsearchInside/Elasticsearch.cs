@@ -30,9 +30,7 @@ namespace ElasticsearchInside
         {
             AppDomain.CurrentDomain.AssemblyResolve += (s, e) =>
             {
-                Console.WriteLine("****" + e.Name);
-
-                if (e.Name != "test")
+                if (e.Name != "LZ4PCL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")
                     return null;
 
                 using (var memStream = new MemoryStream())
