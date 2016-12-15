@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ElasticsearchInside.Utilities.Archive
 {
@@ -20,11 +21,11 @@ namespace ElasticsearchInside.Utilities.Archive
             return ReadInt32();
         }
 
-        public void ExtractToDirectory(DirectoryInfo target)
+        public async Task ExtractToDirectory(DirectoryInfo target, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
-                while (true)
+                while (!cancellationToken.IsCancellationRequested)
                 {
                     var filename = ReadFileName();
                     var fullPath = new FileInfo(Path.Combine(target.FullName, filename));
@@ -32,7 +33,7 @@ namespace ElasticsearchInside.Utilities.Archive
                     EnsurePath(fullPath.Directory);
 
                     using (var destination = fullPath.OpenWrite())
-                        ExtractToStream(destination);
+                        await ExtractToStream(destination, cancellationToken);
                 }
             }
             catch (EndOfStreamException)
@@ -42,7 +43,7 @@ namespace ElasticsearchInside.Utilities.Archive
            
         }
 
-        internal void ExtractToStream(Stream destination)
+        internal async Task ExtractToStream(Stream destination, CancellationToken cancellationToken = default(CancellationToken))
         {
             var length = ReadInt32();
             var buffer = new byte[81920];
@@ -51,13 +52,13 @@ namespace ElasticsearchInside.Utilities.Archive
             var readLength = Math.Min(buffer.Length, length);
 
             var total = 0;
-            while ((readLength > 0) && (count = Read(buffer, 0, readLength)) != 0)
+            while ((readLength > 0) && (count = Read(buffer, 0, readLength)) != 0 && !cancellationToken.IsCancellationRequested)
             {
                 total += count;
                 if (total + buffer.Length > length)
                     readLength = length - total;
 
-                destination.Write(buffer, 0, count);
+                await destination.WriteAsync(buffer, 0, count, cancellationToken);
             }
         }
 

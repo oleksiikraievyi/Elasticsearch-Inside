@@ -2,35 +2,39 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using ElasticsearchInside.CommandLine;
+using ElasticsearchInside.Config;
 using ElasticsearchInside.Executables;
+using ElasticsearchInside.Utilities;
 using ElasticsearchInside.Utilities.Archive;
 using LZ4PCL;
 using CompressionMode = LZ4PCL.CompressionMode;
-using ElasticsearchInside.Configuration;
 
 namespace ElasticsearchInside
 {
+    /// <summary>
+    /// Starts a elasticsearch instance in the background, use Ready() to wait for start to complete
+    /// </summary>
     public class Elasticsearch : IDisposable
     {
-        private Process _elasticSearchProcess;
         private bool _disposed;
-        private readonly DirectoryInfo temporaryRootFolder = new DirectoryInfo(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N")));
-        private DirectoryInfo ElasticsearchHome { get; set; }
-        private DirectoryInfo JavaHome { get; set; }
-        private readonly ElasticsearchParameters parameters = new ElasticsearchParameters();
-        private readonly CommandLineBuilder _commandLineBuilder = new CommandLineBuilder();
-        private readonly Stopwatch startup;
-
+        private readonly Stopwatch _stopwatch;
+        private ProcessWrapper _processWrapper;
+        private readonly Task _startupTask;
+        private Settings _settings;
 
         static Elasticsearch()
         {
             AppDomain.CurrentDomain.AssemblyResolve += (s, e) =>
             {
+                Console.WriteLine("****" + e.Name);
+
+                if (e.Name != "test")
+                    return null;
+
                 using (var memStream = new MemoryStream())
                 {
                     using (var stream = typeof(Elasticsearch).Assembly.GetManifestResourceStream(typeof(RessourceTarget), "LZ4PCL.dll"))
@@ -41,165 +45,144 @@ namespace ElasticsearchInside
             };
         }
 
-        public Uri Url
+        public Uri Url => _settings.GetUrl();
+        public ISettings Settings => _settings;
+        public async Task<Elasticsearch> Ready()
         {
-            get
+            await _startupTask;
+            return this;
+        }
+
+        private void Info(string message)
+        {
+            if (_settings == null || !_settings.LoggingEnabled)
+                return;
+
+            _settings.Logger(message);
+        }
+
+        public Elasticsearch(Func<ISettings, ISettings> configurationAction = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            _stopwatch = Stopwatch.StartNew();
+            _startupTask = SetupAndStart(configurationAction, cancellationToken);
+        }
+
+        private async Task SetupAndStart(Func<ISettings, ISettings> configurationAction, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            _settings = await Config.Settings.LoadDefault(cancellationToken);
+            configurationAction?.Invoke(_settings);
+
+            Info($"Starting Elasticsearch {_settings.ElasticsearchVersion}");
+            
+            await SetupEnvironment(cancellationToken);
+            Info($"Environment ready after {_stopwatch.Elapsed.TotalSeconds} seconds");
+            await StartProcess(cancellationToken);
+            Info("Process started");
+            await WaitForOk(cancellationToken);
+            Info("We got ok");
+            await InstallPlugins(cancellationToken);
+            Info("Installed plugins");
+        }
+
+        private async Task InstallPlugins(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            foreach (var plugin in _settings.Plugins)
             {
-                if (!parameters.ElasticsearchPort.HasValue)
-                    throw new ApplicationException("Expected HttpPort to be set");
-
-                return new UriBuilder
+                Info($"Installing plugin {plugin.Name}...");
+                using (var process = new ProcessWrapper(
+                    new DirectoryInfo(Path.Combine(_settings.ElasticsearchHomePath.FullName, "bin")),
+                    Path.Combine(_settings.ElasticsearchHomePath.FullName, "bin\\elasticsearch-plugin.bat"),
+                    plugin.GetInstallCommand(),
+                    Info,
+                    startInfo =>
+                    {
+                        if (startInfo.EnvironmentVariables.ContainsKey("JAVA_HOME"))
+                        {
+                            Info("Removing old JAVA_HOME and replacing with bundled JRE.");
+                            startInfo.EnvironmentVariables.Remove("JAVA_HOME");
+                        }
+                        startInfo.EnvironmentVariables.Add("JAVA_HOME", _settings.JvmPath.FullName);
+                    }
+                ))
                 {
-                    Scheme = Uri.UriSchemeHttp,
-                    Host = parameters.NetworkHost,
-                    Port = parameters.ElasticsearchPort.Value
-                }.Uri;
-            }
-        }
-
-        private void Info(string format, params object[] args)
-        {
-            if (parameters.LoggingEnabled)
-                if (args == null || args.Length == 0)
-                    parameters.Logger("{0}", new object[] { format });
-                else
-                    parameters.Logger(format, args);
-        }
-
-
-        public Elasticsearch(Func<IElasticsearchParameters, IElasticsearchParameters> configurationAction = null)
-        {
-            if (configurationAction != null)
-                configurationAction.Invoke(parameters);
-
-            startup = Stopwatch.StartNew();
-
-            SetupEnvironment();
-
-            Info("Environment ready after {0} seconds", startup.Elapsed.TotalSeconds);
-
-            StartProcess();
-            WaitForGreen();
-
-            InstallPlugins();
-        }
-
-        private void InstallPlugins()
-        {
-            foreach (Plugin plugin in parameters.Plugins)
-            {
-                Process proc = new Process();
-                proc.StartInfo.FileName = Path.Combine(ElasticsearchHome.FullName, "bin\\plugin.bat");
-                proc.StartInfo.WorkingDirectory = Path.Combine(ElasticsearchHome.FullName, "bin");
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardError = true;
-                proc.OutputDataReceived += (sender, args) => Trace.WriteLine(plugin.Name + ": " + args.Data);
-                proc.StartInfo.Arguments = plugin.GetInstallCommand();
-
-                // set JAVA_HOME to use the packaged JRE
-                const string JAVA_HOME = "JAVA_HOME";
-                if (proc.StartInfo.EnvironmentVariables.ContainsKey(JAVA_HOME))
-                {
-                    Info("Removing old JAVA_HOME and replacing with bundled JRE.");
-                    proc.StartInfo.EnvironmentVariables.Remove(JAVA_HOME);
+                    await process.Start(cancellationToken);
+                    Info($"Waiting for plugin {plugin.Name} install...");
+                    process.WaitForExit();
                 }
-                proc.StartInfo.EnvironmentVariables.Add(JAVA_HOME, JavaHome.FullName);
-
-                Info("Installing plugin " + plugin.Name + "...");
-                Info("    " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
-                proc.Start();
-                proc.BeginOutputReadLine();
-                Info("Waiting for plugin " + plugin.Name + " install...");
-                proc.WaitForExit();
-                Info("Plugin " + plugin.Name + " installed.");
-
-                Restart();
+                Info($"Plugin {plugin.Name} installed.");
+                await Restart();
             }
         }
 
-        private void SetupEnvironment()
+        private async Task SetupEnvironment(CancellationToken cancellationToken = default(CancellationToken))
         {
-            parameters.EsHomePath = new DirectoryInfo(Path.Combine(temporaryRootFolder.FullName, "es"));
-            JavaHome = new DirectoryInfo(Path.Combine(temporaryRootFolder.FullName, "jre"));
-            ElasticsearchHome = parameters.EsHomePath;
+            var jreTask = Task.Run(() => ExtractEmbeddedLz4Stream("jre.lz4", _settings.JvmPath, cancellationToken), cancellationToken);
+            var esTask = Task.Run(() => ExtractEmbeddedLz4Stream("elasticsearch.lz4", _settings.ElasticsearchHomePath, cancellationToken), cancellationToken)
+                .ContinueWith(_ => _settings.WriteSettings(), cancellationToken);
 
-            var jreTask = Task.Run(() => ExtractEmbeddedLz4Stream("jre.lz4", JavaHome));
-            var esTask = Task.Run(() => ExtractEmbeddedLz4Stream("elasticsearch.lz4", ElasticsearchHome));
-
-            Task.WaitAll(jreTask, esTask);
+            await Task.WhenAll(jreTask, esTask);
         }
 
 
-        private void WaitForGreen()
+        private async Task WaitForOk(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var statusUrl = new UriBuilder(Url)
+            var timeoutSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            var linked = CancellationTokenSource.CreateLinkedTokenSource(timeoutSource.Token, cancellationToken);
+            
+            var statusUrl = new UriBuilder(_settings.GetUrl())
             {
                 Path = "_cluster/health",
                 Query = "wait_for_status=yellow"
             }.Uri;
 
-            var statusCode = (HttpStatusCode)0;
-            do
+            using (var client = new HttpClient())
             {
-                try
+                var statusCode = (HttpStatusCode)0;
+                do
                 {
-                    var request = WebRequest.Create(statusUrl);
-                    using (var response = (HttpWebResponse)request.GetResponse())
+                    try
+                    {
+                        var response = await client.GetAsync(statusUrl, linked.Token);
                         statusCode = response.StatusCode;
-                }
-                catch (WebException)
-                {
-                }
+                    }
+                    catch (HttpRequestException) { }
+                    catch (TaskCanceledException ex) {
+                        throw new TimeoutWaitingForElasticsearchStatusException(ex); 
+                    }
+                    await Task.Delay(100, linked.Token);
 
-                Thread.Sleep(100);
-
-            } while (statusCode != HttpStatusCode.OK);
-
-            startup.Stop();
-            Info("Started in {0} seconds", startup.Elapsed.TotalSeconds);
+                } while (statusCode != HttpStatusCode.OK && !linked.IsCancellationRequested);
+            }
+            
+            _stopwatch.Stop();
+            Info($"Started in {_stopwatch.Elapsed.TotalSeconds} seconds");
         }
 
-        private void StartProcess()
+        private async Task StartProcess(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var processStartInfo = new ProcessStartInfo(string.Format(@"""{0}""", Path.Combine(JavaHome.FullName, "bin/java.exe")))
-            {
-                UseShellExecute = false,
-                Arguments = _commandLineBuilder.Build(parameters),
-                WindowStyle = ProcessWindowStyle.Maximized,
-                CreateNoWindow = true,
-                LoadUserProfile = false,
-                WorkingDirectory = ElasticsearchHome.FullName,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                StandardOutputEncoding = Encoding.ASCII,
-            };
+            var args = _settings.BuildCommandline();
 
-            _elasticSearchProcess = Process.Start(processStartInfo);
-            _elasticSearchProcess.ErrorDataReceived += (sender, eventargs) => Info(eventargs.Data);
-            _elasticSearchProcess.OutputDataReceived += (sender, eventargs) => Info(eventargs.Data);
-            _elasticSearchProcess.BeginOutputReadLine();
+            _processWrapper = new ProcessWrapper(_settings.ElasticsearchHomePath, Path.Combine(_settings.JvmPath.FullName, "bin/java.exe"), args, Info);
+            await _processWrapper.Start(cancellationToken);
         }
-
-        public void Restart()
+        
+        public async Task Restart()
         {
-            _elasticSearchProcess.Kill();
-            _elasticSearchProcess.WaitForExit();
-
-            StartProcess();
-            WaitForGreen();
+            await _processWrapper.Restart();
+            await StartProcess();
+            await WaitForOk();
         }
 
-        private void ExtractEmbeddedLz4Stream(string name, DirectoryInfo destination)
+        private async Task ExtractEmbeddedLz4Stream(string name, DirectoryInfo destination, CancellationToken cancellationToken = default(CancellationToken))
         {
             var started = Stopwatch.StartNew();
 
             using (var stream = GetType().Assembly.GetManifestResourceStream(typeof(RessourceTarget), name))
             using (var decompresStream = new LZ4Stream(stream, CompressionMode.Decompress))
             using (var archiveReader = new ArchiveReader(decompresStream))
-                archiveReader.ExtractToDirectory(destination);
+                await archiveReader.ExtractToDirectory(destination, cancellationToken);
            
-            Info("Extracted {0} in {1} seconds", name, started.Elapsed.TotalSeconds);
+            Info($"Extracted {name.Split('.')[0]} in {started.Elapsed.TotalSeconds:#0.##} seconds");
         }
 
 
@@ -209,10 +192,8 @@ namespace ElasticsearchInside
                 return;
             try
             {
-                _elasticSearchProcess.Kill();
-                _elasticSearchProcess.WaitForExit();
-                temporaryRootFolder.Delete(true);
-
+                _processWrapper.Dispose();
+                _settings.Dispose();
             }
             catch (Exception ex)
             {

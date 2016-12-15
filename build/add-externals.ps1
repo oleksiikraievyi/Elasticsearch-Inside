@@ -20,10 +20,12 @@ function DownloadElasticsearch {
 
     $url = $doc.DocumentNode.SelectSingleNode("//a[starts-with(@class, 'zip-link')]");
 
+	Write-Host "Url is now " @($url.Attributes["href"].Value)
+
     # change this line to download a specific version
-    $downloadUrl = New-Object System.Uri -ArgumentList @($url.Attributes["href"].Value)
-    
-    Write-Host "Downloading " $downloadUrl
+    # $downloadUrl = #New-Object System.Uri -ArgumentList $url.Attributes["href"].Value
+    $downloadUrl = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.0.0.zip" # $url.Attributes["href"].Value
+	Write-Host "Downloading " $downloadUrl
 
 
     $bak = $ProgressPreference 
