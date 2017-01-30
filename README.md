@@ -60,7 +60,7 @@ Plugins can be added during initialization. Elasticsearch is restarted after eac
 
 ```c#
 
-using (var elasticsearch = new Elasticsearch(c => c.AddPlugin(new Plugin("plugin"))).Ready())
+using (var elasticsearch = await new Elasticsearch(c => c.AddPlugin(new Plugin("plugin"))).Ready())
 {
     ////Arrange
     var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
