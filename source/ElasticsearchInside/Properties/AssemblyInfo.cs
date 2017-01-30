@@ -12,5 +12,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("5f88eacd-89aa-434d-a369-c20564f9b06b")]
-[assembly: AssemblyInformationalVersion("2.4.2")]
+[assembly: AssemblyInformationalVersion("5.0.0")]
 [assembly: InternalsVisibleTo("ElasticsearchInside.Tests")]

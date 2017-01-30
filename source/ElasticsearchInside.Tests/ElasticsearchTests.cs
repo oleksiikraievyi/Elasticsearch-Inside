@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Threading.Tasks;
+using ElasticsearchInside.Config;
 using Nest;
 using NUnit.Framework;
 
@@ -8,26 +10,25 @@ namespace ElasticsearchInside.Tests
     public class ElasticsearchTests
     {
         [Test]
-        public void Can_start()
+        public async Task Can_start()
         {
-            using (var elasticsearch = new Elasticsearch())
+            using (var elasticsearch = await new Elasticsearch(i => i.EnableLogging()).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
                 ////Act
                 var result = client.Ping();
-
+                
                 ////Assert
                 Assert.That(result.IsValid);
             }
         }
-
-
+        
         [Test]
-        public void Can_insert_data()
+        public async Task Can_insert_data()
         {
-            using (var elasticsearch = new Elasticsearch())
+            using (var elasticsearch = await new Elasticsearch(i => i.EnableLogging()).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -36,16 +37,16 @@ namespace ElasticsearchInside.Tests
                 client.Index(new { id = "tester" }, i => i.Index("test-index").Type("test-type"));
 
                 ////Assert
-                var result = client.Get<dynamic>("tester", "test-index", "test-type");
+                var result = client.Get(DocumentPath<dynamic>.Id("tester"), i => i.Index("test-index").Type("test-type"));
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Found);
             }
         }
 
         [Test]
-        public void Can_change_configuration()
+        public async Task Can_change_configuration()
         {
-            using (var elasticsearch = new Elasticsearch(c => c.Port(444).EnableLogging()))
+            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(444).EnableLogging().LogTo(Console.WriteLine)).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -58,65 +59,52 @@ namespace ElasticsearchInside.Tests
                 Assert.That(elasticsearch.Url.Port, Is.EqualTo(444));
             }
         }
-
+        
         [Test]
-        public void Can_log_output()
+        public async Task Can_log_output()
         {
             var logged = false;
-            using (new Elasticsearch(c => c.EnableLogging().LogTo((f, a) => logged = true)))
+            using (var elasticsearch = new Elasticsearch(c => c.EnableLogging().LogTo(message => logged = true)))
             {
+                await elasticsearch.Ready();
+
                 ////Assert
                 Assert.That(logged);
             }
         }
 
         [Test]
-        public void Can_install_plugin()
+        public async Task Can_install_plugin()
         {
-            string pluginName = "mobz/elasticsearch-head";
-            using (var elasticsearch = new Elasticsearch(c => c.AddPlugin(new Configuration.Plugin(pluginName))))
+            using (var elasticsearch = await new Elasticsearch(c => c.EnableLogging().AddPlugin(new Plugin("analysis-icu"))).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
                 ////Act
-                var result = client.CatPlugins();
-
-                int pluginCount = 0;
-                foreach (CatPluginsRecord plugin in result.Records)
-                {
-                    pluginCount++;
-                }
-
+                var result = await client.CatPluginsAsync();
+                
                 ////Assert
-                Assert.That(result.IsValid);
-                Assert.AreEqual(1, pluginCount);
+                Assert.That(result.Records.Count, Is.EqualTo(1));
             }
         }
 
         [Test]
-        public void Can_install_plugin_url()
+        public async Task Folder_is_removed_after_dispose()
         {
-            string pluginName = "test_plugin_135076"; // random numbers to make sure the name doesn't conflict with publicly available plugins
-            string pluginUrl = "file:///" + Directory.GetCurrentDirectory() + "/TestFiles/test_plugin_135076.zip";
-            using (var elasticsearch = new Elasticsearch(c => c.AddPlugin(new Configuration.Plugin(pluginName, pluginUrl))))
-            {
-                ////Arrange
-                var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
+            ////Arrange
+            Settings settings;
 
-                ////Act
-                var result = client.CatPlugins();
+            ////Act
+            using (var elasticsearch = await new Elasticsearch(c => c.EnableLogging().LogTo(Console.WriteLine)).Ready())
+                settings = (Settings)elasticsearch.Settings;
 
-                int pluginCount = 0;
-                foreach (CatPluginsRecord plugin in result.Records)
-                {
-                    pluginCount++;
-                }
 
-                ////Assert
-                Assert.That(result.IsValid);
-                Assert.AreEqual(1, pluginCount);
-            }
+            ////Assert
+            var folder = settings.RootFolder;
+            folder.Refresh();
+
+            Assert.That(!folder.Exists);
         }
     }
 }
