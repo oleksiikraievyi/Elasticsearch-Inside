@@ -16,7 +16,7 @@ namespace ElasticsearchInside.Config
             config.ElasticsearchParameters.AddOrUpdate("http.port", port.ToString());
             return config;
         }
-
+        
         /// <summary>
         /// Parses the current port from config
         /// </summary>
