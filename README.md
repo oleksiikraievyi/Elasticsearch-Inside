@@ -14,7 +14,7 @@ In these tests I'm using the excellent client [Elasticsearch-NEST][nest].
 
 
 ```c#
-using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+using (var elasticsearch = new Elasticsearch())
 {
     ////Arrange
     await elasticsearch.Ready();
@@ -39,10 +39,10 @@ GetPort(), SetPort(), SetClustername() etc.
 
 In this example I change the port for the elasticsearch startup:
 
-Also not that since Ready() returns the instance, it can be awaited directly.
+Also note that since Ready() returns the instance, it can be awaited directly.
 
 ```c#
-using (var elasticsearch = await new ElasticsearchInside.Elasticsearch(c => c.SetPort(444).SetNodename("Homer")).Ready())
+using (var elasticsearch = await new Elasticsearch(c => c.SetPort(444).SetNodename("Homer")).Ready())
 {
     ////Arrange
     var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
