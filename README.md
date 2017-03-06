@@ -29,6 +29,24 @@ using (var elasticsearch = new Elasticsearch())
 
 ```
 
+Note that if you are not using async you can use the sync version of ready:
+
+```c#
+using (var elasticsearch = new Elasticsearch(i => i.EnableLogging()).ReadySync())
+{
+    ////Arrange
+    var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
+
+    ////Act
+    var result = client.Ping();
+
+    ////Assert
+    Assert.That(result.IsValid);
+}
+
+```
+
+
 All settings can be modified via the constructor via these two collections:
 
 * ElasticsearchParameters (writen to elasticsearch.yml)
