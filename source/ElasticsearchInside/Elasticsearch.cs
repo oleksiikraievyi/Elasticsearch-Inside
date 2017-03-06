@@ -51,6 +51,11 @@ namespace ElasticsearchInside
             return this;
         }
 
+        public Elasticsearch ReadySync()
+        {
+            return Ready().ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+
         private void Info(string message)
         {
             if (_settings == null || !_settings.LoggingEnabled)
@@ -67,18 +72,18 @@ namespace ElasticsearchInside
 
         private async Task SetupAndStart(Func<ISettings, ISettings> configurationAction, CancellationToken cancellationToken = default(CancellationToken))
         {
-            _settings = await Config.Settings.LoadDefault(cancellationToken);
+            _settings = await Config.Settings.LoadDefault(cancellationToken).ConfigureAwait(false);
             configurationAction?.Invoke(_settings);
 
             Info($"Starting Elasticsearch {_settings.ElasticsearchVersion}");
             
-            await SetupEnvironment(cancellationToken);
+            await SetupEnvironment(cancellationToken).ConfigureAwait(false);
             Info($"Environment ready after {_stopwatch.Elapsed.TotalSeconds} seconds");
-            await StartProcess(cancellationToken);
+            await StartProcess(cancellationToken).ConfigureAwait(false);
             Info("Process started");
-            await WaitForOk(cancellationToken);
+            await WaitForOk(cancellationToken).ConfigureAwait(false);
             Info("We got ok");
-            await InstallPlugins(cancellationToken);
+            await InstallPlugins(cancellationToken).ConfigureAwait(false);
             Info("Installed plugins");
         }
 
@@ -103,12 +108,12 @@ namespace ElasticsearchInside
                     }
                 ))
                 {
-                    await process.Start(cancellationToken);
+                    await process.Start(cancellationToken).ConfigureAwait(false);
                     Info($"Waiting for plugin {plugin.Name} install...");
                     process.WaitForExit();
                 }
                 Info($"Plugin {plugin.Name} installed.");
-                await Restart();
+                await Restart().ConfigureAwait(false);
             }
         }
 
@@ -118,7 +123,7 @@ namespace ElasticsearchInside
             var esTask = Task.Run(() => ExtractEmbeddedLz4Stream("elasticsearch.lz4", _settings.ElasticsearchHomePath, cancellationToken), cancellationToken)
                 .ContinueWith(_ => _settings.WriteSettings(), cancellationToken);
 
-            await Task.WhenAll(jreTask, esTask);
+            await Task.WhenAll(jreTask, esTask).ConfigureAwait(false);
         }
 
 
@@ -147,7 +152,7 @@ namespace ElasticsearchInside
                     catch (TaskCanceledException ex) {
                         throw new TimeoutWaitingForElasticsearchStatusException(ex); 
                     }
-                    await Task.Delay(100, linked.Token);
+                    await Task.Delay(100, linked.Token).ConfigureAwait(false);
 
                 } while (statusCode != HttpStatusCode.OK && !linked.IsCancellationRequested);
             }
@@ -161,14 +166,14 @@ namespace ElasticsearchInside
             var args = _settings.BuildCommandline();
 
             _processWrapper = new ProcessWrapper(_settings.ElasticsearchHomePath, Path.Combine(_settings.JvmPath.FullName, "bin/java.exe"), args, Info);
-            await _processWrapper.Start(cancellationToken);
+            await _processWrapper.Start(cancellationToken).ConfigureAwait(false);
         }
         
         public async Task Restart()
         {
-            await _processWrapper.Restart();
-            await StartProcess();
-            await WaitForOk();
+            await _processWrapper.Restart().ConfigureAwait(false);
+            await StartProcess().ConfigureAwait(false);
+            await WaitForOk().ConfigureAwait(false);
         }
 
         private async Task ExtractEmbeddedLz4Stream(string name, DirectoryInfo destination, CancellationToken cancellationToken = default(CancellationToken))
@@ -178,7 +183,7 @@ namespace ElasticsearchInside
             using (var stream = GetType().Assembly.GetManifestResourceStream(typeof(RessourceTarget), name))
             using (var decompresStream = new LZ4Stream(stream, CompressionMode.Decompress))
             using (var archiveReader = new ArchiveReader(decompresStream))
-                await archiveReader.ExtractToDirectory(destination, cancellationToken);
+                await archiveReader.ExtractToDirectory(destination, cancellationToken).ConfigureAwait(false);
            
             Info($"Extracted {name.Split('.')[0]} in {started.Elapsed.TotalSeconds:#0.##} seconds");
         }

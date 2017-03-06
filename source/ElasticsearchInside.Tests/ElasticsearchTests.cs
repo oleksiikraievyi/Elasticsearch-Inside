@@ -24,7 +24,23 @@ namespace ElasticsearchInside.Tests
                 Assert.That(result.IsValid);
             }
         }
-        
+
+
+        [Test]
+        public void Can_start_sync()
+        {
+            using (var elasticsearch = new Elasticsearch(i => i.EnableLogging()).ReadySync())
+            {
+                ////Arrange
+                var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
+
+                ////Act
+                var result = client.Ping();
+
+                ////Assert
+                Assert.That(result.IsValid);
+            }
+        }
         [Test]
         public async Task Can_insert_data()
         {
