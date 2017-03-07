@@ -23,8 +23,7 @@ function DownloadElasticsearch {
 	Write-Host "Url is now " @($url.Attributes["href"].Value)
 
     # change this line to download a specific version
-    # $downloadUrl = #New-Object System.Uri -ArgumentList $url.Attributes["href"].Value
-    $downloadUrl = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.1.zip" # $url.Attributes["href"].Value
+    $downloadUrl = $url.Attributes["href"].Value
 	Write-Host "Downloading " $downloadUrl
 
 
@@ -87,11 +86,10 @@ if ($Host.Version.Major -lt 3) {
 
 Remove-Item ..\source\ElasticsearchInside\Executables\*.lz4
 
-
 DownloadJre
 
 $jreDir = Get-ChildItem -Recurse $directory | Where-Object { $_.PSIsContainer -and `
-    $_.Name.StartsWith("jre") } | Select-Object -First 1
+   $_.Name.StartsWith("jre") } | Select-Object -First 1
 
 Write-Host "Encoding file " $jreDir.Fullname
 .\tools\LZ4Encoder.exe  $jreDir.Fullname ..\source\ElasticsearchInside\Executables\jre.lz4
