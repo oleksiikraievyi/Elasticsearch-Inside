@@ -1,5 +1,6 @@
 ![](https://raw.githubusercontent.com/poulfoged/elasticsearch-inside/master/logo.png) &nbsp; ![](https://ci.appveyor.com/api/projects/status/prwp3j290469ntpb/branch/master?svg=true) &nbsp; ![](http://img.shields.io/nuget/v/elasticsearch-inside.svg?style=flat)
-#Elasticsearch Inside  
+
+# Elasticsearch Inside
 
 Many thanks to [DJPorv](https://github.com/DJPorv) who created the first version of this.
 
