@@ -1,6 +1,7 @@
 Push-Location $PSScriptRoot
 
-[System.Reflection.Assembly]::UnsafeLoadFrom("e:\github\Elasticsearch-Inside\build\tools\HtmlAgilityPack.dll ")
+$htmlAbilityPackDllPath = Join-Path $PSScriptRoot ".\tools\HtmlAgilityPack.dll"
+[System.Reflection.Assembly]::UnsafeLoadFrom($htmlAbilityPackDllPath)
 # Add-Type -Path .\tools\HtmlAgilityPack.dll
 
 $tempDir = ".\temp"
