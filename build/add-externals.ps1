@@ -24,7 +24,7 @@ function DownloadElasticsearch {
 	Write-Host "Url is now " @($url.Attributes["href"].Value)
 
     # change this line to download a specific version
-    $downloadUrl = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.3.1.zip" # $url.Attributes["href"].Value
+    $downloadUrl = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.3.2.zip" # $url.Attributes["href"].Value
 	Write-Host "Downloading " $downloadUrl
 
 
