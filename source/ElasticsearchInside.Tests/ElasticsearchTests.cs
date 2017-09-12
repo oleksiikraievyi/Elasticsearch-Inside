@@ -12,7 +12,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public async Task Can_start()
         {
-            using (var elasticsearch = await new Elasticsearch(i => i.EnableLogging()).Ready())
+            using (var elasticsearch = await new Elasticsearch(i => i.SetPort(4444).EnableLogging()).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -29,7 +29,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public void Can_start_sync()
         {
-            using (var elasticsearch = new Elasticsearch(i => i.EnableLogging()).ReadySync())
+            using (var elasticsearch = new Elasticsearch(i => i.SetPort(4444).EnableLogging()).ReadySync())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -44,7 +44,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public async Task Can_insert_data()
         {
-            using (var elasticsearch = await new Elasticsearch(i => i.EnableLogging()).Ready())
+            using (var elasticsearch = await new Elasticsearch(i => i.SetPort(4444).EnableLogging()).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -62,7 +62,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public async Task Can_change_configuration()
         {
-            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(444).EnableLogging().LogTo(Console.WriteLine)).Ready())
+            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(Console.WriteLine)).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -72,7 +72,7 @@ namespace ElasticsearchInside.Tests
 
                 ////Assert
                 Assert.That(result.IsValid);
-                Assert.That(elasticsearch.Url.Port, Is.EqualTo(444));
+                Assert.That(elasticsearch.Url.Port, Is.EqualTo(4444));
             }
         }
         
@@ -80,7 +80,7 @@ namespace ElasticsearchInside.Tests
         public async Task Can_log_output()
         {
             var logged = false;
-            using (var elasticsearch = new Elasticsearch(c => c.EnableLogging().LogTo(message => logged = true)))
+            using (var elasticsearch = new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(message => logged = true)))
             {
                 await elasticsearch.Ready();
 
@@ -92,7 +92,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public async Task Can_install_plugin()
         {
-            using (var elasticsearch = await new Elasticsearch(c => c.EnableLogging().AddPlugin(new Plugin("analysis-icu"))).Ready())
+            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().AddPlugin(new Plugin("analysis-icu"))).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -112,7 +112,7 @@ namespace ElasticsearchInside.Tests
             Settings settings;
 
             ////Act
-            using (var elasticsearch = await new Elasticsearch(c => c.EnableLogging().LogTo(Console.WriteLine)).Ready())
+            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(Console.WriteLine)).Ready())
                 settings = (Settings)elasticsearch.Settings;
 
 

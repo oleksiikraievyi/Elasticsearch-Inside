@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,8 +28,11 @@ namespace ElasticsearchInside.Config
         }
 
         public string BuildCommandline()
-        {
-            return $"{string.Join(" ", JVMParameters)} -Des.path.home=\"{ElasticsearchHomePath.FullName}\" -cp \"lib/elasticsearch-{ElasticsearchVersion}.jar;lib/*\" \"org.elasticsearch.bootstrap.Elasticsearch\"";
+        {             
+            return
+                RuntimeInformation.IsOSPlatform(OSPlatform.Windows)?
+                $"{string.Join(" ", JVMParameters)} -Des.path.home=\"{ElasticsearchHomePath.FullName}\" -cp \"lib/elasticsearch-{ElasticsearchVersion}.jar;lib/*\" \"org.elasticsearch.bootstrap.Elasticsearch\"":
+                $"{string.Join(" ", JVMParameters)} -Des.path.home=\"{ElasticsearchHomePath.FullName}\" -cp \"lib/elasticsearch-{ElasticsearchVersion}.jar:lib/*\" \"org.elasticsearch.bootstrap.Elasticsearch\"";
         }
 
         public static async Task<Settings> LoadDefault(CancellationToken cancellationToken = default(CancellationToken))

@@ -1,4 +1,6 @@
-﻿namespace ElasticsearchInside.Config
+﻿using System.Runtime.InteropServices;
+
+namespace ElasticsearchInside.Config
 {
     /// <summary>
     /// Defines properties needed to install a plugin.
@@ -32,7 +34,9 @@
             {
                 return $"install \"{Url}\"";
             }
-            return $"install \"{Name}\"";
+            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? $"install \"{Name}\""
+                : $"elasticsearch-plugin install \"{Name}\"";
         }
     }
 }
