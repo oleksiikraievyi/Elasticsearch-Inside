@@ -22,7 +22,7 @@ function DownloadElasticsearch {
     $url = $doc.DocumentNode.SelectSingleNode("//a[starts-with(@class, 'zip-link')]");
 
     # change this line to download a specific version
-    $downloadUrl = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.3.zip" # $url.Attributes["href"].Value
+    $downloadUrl = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.5.zip" # $url.Attributes["href"].Value
     
     Write-Host "Downloading " $downloadUrl
 
