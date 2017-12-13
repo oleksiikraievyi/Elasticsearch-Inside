@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using ElasticsearchInside.Config;
@@ -92,9 +93,12 @@ namespace ElasticsearchInside
             foreach (var plugin in _settings.Plugins)
             {
                 Info($"Installing plugin {plugin.Name}...");
+                var pluginInstallCommand = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)? 
+                    Path.Combine(_settings.ElasticsearchHomePath.FullName,"bin\\elasticsearch-plugin.bat")
+                    : "bash";
                 using (var process = new ProcessWrapper(
                     new DirectoryInfo(Path.Combine(_settings.ElasticsearchHomePath.FullName, "bin")),
-                    Path.Combine(_settings.ElasticsearchHomePath.FullName, "bin\\elasticsearch-plugin.bat"),
+                    pluginInstallCommand,
                     plugin.GetInstallCommand(),
                     Info,
                     startInfo =>
@@ -165,7 +169,10 @@ namespace ElasticsearchInside
         {
             var args = _settings.BuildCommandline();
 
-            _processWrapper = new ProcessWrapper(_settings.ElasticsearchHomePath, Path.Combine(_settings.JvmPath.FullName, "bin/java.exe"), args, Info);
+            var javaExecutable = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? Path.Combine(_settings.JvmPath.FullName, "bin/java.exe")
+                : "java";
+            _processWrapper = new ProcessWrapper(_settings.ElasticsearchHomePath, javaExecutable, args, Info);
             await _processWrapper.Start(cancellationToken).ConfigureAwait(false);
         }
         

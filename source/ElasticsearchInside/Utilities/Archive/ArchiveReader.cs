@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,8 @@ namespace ElasticsearchInside.Utilities.Archive
         internal string ReadFileName()
         {
             var filenameLength = ReadInt32();
-            return Encoding.UTF8.GetString(ReadBytes(filenameLength));
+            var filestring = Encoding.UTF8.GetString(ReadBytes(filenameLength));
+            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? filestring : filestring.Replace("\\", "/");
         }
 
         internal int ReadStreamLength()

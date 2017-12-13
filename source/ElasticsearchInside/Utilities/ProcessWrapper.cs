@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace ElasticsearchInside.Utilities
 {
@@ -19,8 +20,8 @@ namespace ElasticsearchInside.Utilities
             {
                 UseShellExecute = false,
                 Arguments = arguments,
-                CreateNoWindow = true,
-                LoadUserProfile = false,
+                //CreateNoWindow = true,
+                //LoadUserProfile = false,
                 WorkingDirectory = workingDirectory.FullName,
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
