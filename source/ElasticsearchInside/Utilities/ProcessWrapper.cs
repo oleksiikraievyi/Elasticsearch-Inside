@@ -20,13 +20,15 @@ namespace ElasticsearchInside.Utilities
             {
                 UseShellExecute = false,
                 Arguments = arguments,
-                //CreateNoWindow = true,
-                //LoadUserProfile = false,
                 WorkingDirectory = workingDirectory.FullName,
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
                 StandardOutputEncoding = Encoding.ASCII,
             };
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                _processStartInfo.CreateNoWindow = true;
+
             modifyProcessStartInfo?.Invoke(_processStartInfo);
 
             _logger = logger;
