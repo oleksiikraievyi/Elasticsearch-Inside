@@ -122,5 +122,21 @@ namespace ElasticsearchInside.Tests
 
             Assert.That(!folder.Exists);
         }
+
+        [Test]
+        public void Has_specific_version()
+        {
+            using (var elasticsearch = new Elasticsearch(i => i.SetPort(4444).EnableLogging()).ReadySync())
+            {
+                ////Arrange
+                var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
+
+                ////Act
+                var version = client.RootNodeInfo().Version.Number;
+
+                ////Assert
+                Assert.That(version, Is.EqualTo("6.5.3"));
+            }
+        }
     }
 }
