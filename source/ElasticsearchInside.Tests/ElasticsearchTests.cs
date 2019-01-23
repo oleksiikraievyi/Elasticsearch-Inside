@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using ElasticsearchInside.Config;
 using Nest;
@@ -138,5 +140,22 @@ namespace ElasticsearchInside.Tests
                 Assert.That(version, Is.EqualTo("6.5.3"));
             }
         }
+
+        [Test]
+        public async Task Can_add_file()
+        {
+            const string relativeDestination = "test/copied.txt";
+            const string relativeSource = "TestFiles/testfile.txt";
+            var sourceFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var sourcePath = Path.Combine(sourceFolder, relativeSource);
+            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().AddFile(relativeDestination, sourcePath)).Ready())
+            {
+                var settings = (Settings)elasticsearch.Settings;
+                var folder = settings.ElasticsearchConfigPath;
+                var expected = new FileInfo(Path.Combine(folder.FullName, relativeDestination));
+                Assert.That(expected.Exists);
+            }
+        }
+
     }
 }
