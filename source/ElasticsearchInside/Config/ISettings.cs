@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ElasticsearchInside.Config
 {
@@ -12,5 +13,6 @@ namespace ElasticsearchInside.Config
         ISettings LogTo(Action<string> logger);
 
         ISettings AddPlugin(Plugin plugin);
+        ISettings AddFile(string destinationRelativeToConfigPath, string source);
     }
 }
