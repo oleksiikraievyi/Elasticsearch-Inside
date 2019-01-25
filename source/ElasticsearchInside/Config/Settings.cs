@@ -14,6 +14,7 @@ namespace ElasticsearchInside.Config
         internal readonly DirectoryInfo RootFolder = new DirectoryInfo(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N")));
         public DirectoryInfo ElasticsearchHomePath => new DirectoryInfo(Path.Combine(RootFolder.FullName, "es"));
         public DirectoryInfo JvmPath => new DirectoryInfo(Path.Combine(RootFolder.FullName, "jre"));
+        public DirectoryInfo ElasticsearchConfigPath => new DirectoryInfo(Path.Combine(ElasticsearchHomePath.FullName, "config"));
         public IDictionary<string, string> ElasticsearchParameters { get; } = new Dictionary<string, string>();
         public IList<string> JVMParameters { get; private set; } = new List<string>();
         public IList<string> LoggingConfig { get; } = new List<string>();
@@ -82,17 +83,17 @@ namespace ElasticsearchInside.Config
             if (!pluginDir.Exists)
                 pluginDir.Create();
 
+            WriteFiles();
             await WriteLoggingConfig();
             await WriteYaml();
         }
 
         internal async Task WriteYaml()
         {
-            var configDir = new DirectoryInfo(Path.Combine(ElasticsearchHomePath.FullName, "config"));
-            if (!configDir.Exists)
-                configDir.Create();
+            if (!ElasticsearchConfigPath.Exists)
+                ElasticsearchConfigPath.Create();
 
-            var file = new FileInfo(Path.Combine(configDir.FullName, @"elasticsearch.yml"));
+            var file = new FileInfo(Path.Combine(ElasticsearchConfigPath.FullName, @"elasticsearch.yml"));
             if (file.Exists)
                 file.Delete();
 
@@ -104,17 +105,56 @@ namespace ElasticsearchInside.Config
 
         internal async Task WriteLoggingConfig()
         {
-            var configDir = new DirectoryInfo(Path.Combine(ElasticsearchHomePath.FullName, "config"));
-            if (!configDir.Exists)
-                configDir.Create();
+            if (!ElasticsearchConfigPath.Exists)
+                ElasticsearchConfigPath.Create();
 
-            var file = new FileInfo(Path.Combine(configDir.FullName, @"log4j2.properties"));
+            var file = new FileInfo(Path.Combine(ElasticsearchConfigPath.FullName, @"log4j2.properties"));
 
             using (var fileStream = file.Open(FileMode.Append, FileAccess.Write))
             using (var writer = new StreamWriter(fileStream))
                 foreach (var logsetting in LoggingConfig)
                     await writer.WriteLineAsync(logsetting);
         }
+
+        internal void WriteFiles()
+        {
+            foreach (var kvp in Files)
+            {
+                var destination = kvp.Key;
+                var source = kvp.Value;
+
+                if (!File.Exists(source))
+                    throw new FileNotFoundException("Could not copy unexisting file", source);
+
+                var destinationInfo = new FileInfo(Path.Combine(ElasticsearchConfigPath.FullName, destination));
+                if (!destinationInfo.Directory.Exists)
+                {
+                    destinationInfo.Directory.Create();
+                }
+
+                File.Copy(source, destinationInfo.FullName);
+            }
+        }
+
+        //internal async Task WriteFiles()
+        //{
+        //    foreach (var kvp in Files)
+        //    {
+        //        var destination = kvp.Key;
+        //        var source = kvp.Value;
+
+        //        if (!File.Exists(source))
+        //            await Task.FromException(new FileNotFoundException("Could not copy unexisting file", source));
+
+        //        var destinationInfo = new FileInfo(Path.Combine(ElasticsearchConfigPath.FullName, destination));
+        //        if (!destinationInfo.Directory.Exists)
+        //        {
+        //            destinationInfo.Directory.Create();
+        //        }
+
+        //        await new Task(() => File.Copy(source, destinationInfo.FullName));
+        //    }
+        //}
 
         public ISettings EnableLogging(bool enable = true)
         {
@@ -127,6 +167,7 @@ namespace ElasticsearchInside.Config
         public Action<string> Logger { get; private set; } = message => Trace.WriteLine(message);
 
         public IList<Plugin> Plugins { get; set; } = new List<Plugin>();
+        public IDictionary<string, string> Files { get; set; } = new Dictionary<string, string>();
 
         public ISettings LogTo(Action<string> logger)
         {
@@ -137,6 +178,12 @@ namespace ElasticsearchInside.Config
         public ISettings AddPlugin(Plugin plugin)
         {
             Plugins.Add(plugin);
+            return this;
+        }
+
+        public ISettings AddFile(string destinationRelativeToConfigPath, string source)
+        {
+            Files.Add(destinationRelativeToConfigPath, source);
             return this;
         }
 
