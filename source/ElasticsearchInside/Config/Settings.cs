@@ -136,26 +136,6 @@ namespace ElasticsearchInside.Config
             }
         }
 
-        //internal async Task WriteFiles()
-        //{
-        //    foreach (var kvp in Files)
-        //    {
-        //        var destination = kvp.Key;
-        //        var source = kvp.Value;
-
-        //        if (!File.Exists(source))
-        //            await Task.FromException(new FileNotFoundException("Could not copy unexisting file", source));
-
-        //        var destinationInfo = new FileInfo(Path.Combine(ElasticsearchConfigPath.FullName, destination));
-        //        if (!destinationInfo.Directory.Exists)
-        //        {
-        //            destinationInfo.Directory.Create();
-        //        }
-
-        //        await new Task(() => File.Copy(source, destinationInfo.FullName));
-        //    }
-        //}
-
         public ISettings EnableLogging(bool enable = true)
         {
             this.LoggingEnabled = enable;
