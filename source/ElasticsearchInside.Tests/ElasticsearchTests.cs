@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -107,7 +108,7 @@ namespace ElasticsearchInside.Tests
             }
         }
 
-        [Test, NUnit.Framework.Ignore("Failing on appveyor")]
+        [Test/*, NUnit.Framework.Ignore("Failing on appveyor")*/]
         public async Task Folder_is_removed_after_dispose()
         {
             ////Arrange
@@ -155,6 +156,37 @@ namespace ElasticsearchInside.Tests
                 var expected = new FileInfo(Path.Combine(folder.FullName, relativeDestination));
                 Assert.That(expected.Exists);
             }
+        }
+
+        [Test]
+        public async Task Can_spinup_with_plugin_and_cleanup_twice_without_problems()
+        {
+            Settings settings;
+
+            var plugin = new Plugin("analysis-icu");
+            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(Console.WriteLine).AddPlugin(plugin)).Ready())
+            {
+                settings = (Settings)elasticsearch.Settings;
+                var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
+                var result = await client.CatPluginsAsync();
+                Assert.That(result.Records.Count, Is.EqualTo(1));
+            }
+
+            var folder = settings.RootFolder;
+            folder.Refresh();
+            Assert.That(!folder.Exists);
+
+            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(Console.WriteLine).AddPlugin(plugin)).Ready())
+            {
+                settings = (Settings)elasticsearch.Settings;
+                var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
+                var result = await client.CatPluginsAsync();
+                Assert.That(result.Records.Count, Is.EqualTo(1));
+            }
+
+            folder = settings.RootFolder;
+            folder.Refresh();
+            Assert.That(!folder.Exists);
         }
 
     }
