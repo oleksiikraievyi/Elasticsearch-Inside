@@ -178,7 +178,8 @@ namespace ElasticsearchInside
         
         public async Task Restart()
         {
-            await _processWrapper.Restart().ConfigureAwait(false);
+            _processWrapper.Stop();
+
             await StartProcess().ConfigureAwait(false);
             await WaitForOk().ConfigureAwait(false);
         }
