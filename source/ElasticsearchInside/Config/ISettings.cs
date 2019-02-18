@@ -10,6 +10,7 @@ namespace ElasticsearchInside.Config
 
         IList<string> JVMParameters { get; }
         ISettings EnableLogging(bool enable = true);
+        ISettings SetElasticsearchStartTimeout(int timeout);
         ISettings LogTo(Action<string> logger);
 
         ISettings AddPlugin(Plugin plugin);

@@ -82,7 +82,7 @@ namespace ElasticsearchInside
             Info($"Environment ready after {_stopwatch.Elapsed.TotalSeconds} seconds");
             await StartProcess(cancellationToken).ConfigureAwait(false);
             Info("Process started");
-            await WaitForOk(cancellationToken).ConfigureAwait(false);
+            await WaitForOk(_settings.ElasticsearchStartTimeout, cancellationToken).ConfigureAwait(false);
             Info("We got ok");
             await InstallPlugins(cancellationToken).ConfigureAwait(false);
             Info("Installed plugins");
@@ -131,9 +131,9 @@ namespace ElasticsearchInside
         }
 
 
-        private async Task WaitForOk(CancellationToken cancellationToken = default(CancellationToken))
+        private async Task WaitForOk(int timeout, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var timeoutSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            var timeoutSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout));
             var linked = CancellationTokenSource.CreateLinkedTokenSource(timeoutSource.Token, cancellationToken);
             
             var statusUrl = new UriBuilder(_settings.GetUrl())
@@ -180,7 +180,7 @@ namespace ElasticsearchInside
         {
             await _processWrapper.Restart().ConfigureAwait(false);
             await StartProcess().ConfigureAwait(false);
-            await WaitForOk().ConfigureAwait(false);
+            await WaitForOk(_settings.ElasticsearchStartTimeout).ConfigureAwait(false);
         }
 
         private async Task ExtractEmbeddedLz4Stream(string name, DirectoryInfo destination, CancellationToken cancellationToken = default(CancellationToken))
