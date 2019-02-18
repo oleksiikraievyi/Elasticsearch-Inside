@@ -64,7 +64,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public async Task Can_change_configuration()
         {
-            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(Console.WriteLine)).Ready())
+            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(Console.WriteLine).SetElasticsearchStartTimeout(10)).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
