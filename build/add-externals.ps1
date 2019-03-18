@@ -79,9 +79,7 @@ function DownloadJre{
     .\tools\7z.exe x .\temp\*.tar -otemp\
 }
 
-
-
-if ($Host.Version.Major -lt 3) {
+if ($PSVersionTable.PSVersion.Major -lt 3) {
     throw "Powershell v3 or greater is required."
 }
 

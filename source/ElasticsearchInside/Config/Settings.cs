@@ -164,6 +164,14 @@ namespace ElasticsearchInside.Config
 
         public bool LoggingEnabled { get; set; }
 
+        public ISettings SetElasticsearchStartTimeout(int timeout) 
+        { 
+            this.ElasticsearchStartTimeout = timeout;
+            return this;
+        }
+
+        public int ElasticsearchStartTimeout { get; set; } = 30;
+
         public Action<string> Logger { get; private set; } = message => Trace.WriteLine(message);
 
         public IList<Plugin> Plugins { get; set; } = new List<Plugin>();

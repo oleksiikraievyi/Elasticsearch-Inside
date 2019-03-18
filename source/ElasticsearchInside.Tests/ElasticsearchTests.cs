@@ -14,7 +14,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public async Task Can_start()
         {
-            using (var elasticsearch = await new Elasticsearch(i => i.SetPort(4444).EnableLogging()).Ready())
+            using (var elasticsearch = await new Elasticsearch(i => i.SetPort(4444).EnableLogging().SetElasticsearchStartTimeout(60)).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -31,7 +31,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public void Can_start_sync()
         {
-            using (var elasticsearch = new Elasticsearch(i => i.SetPort(4444).EnableLogging()).ReadySync())
+            using (var elasticsearch = new Elasticsearch(i => i.SetPort(4444).EnableLogging().SetElasticsearchStartTimeout(60)).ReadySync())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -46,7 +46,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public async Task Can_insert_data()
         {
-            using (var elasticsearch = await new Elasticsearch(i => i.SetPort(4444).EnableLogging()).Ready())
+            using (var elasticsearch = await new Elasticsearch(i => i.SetPort(4444).EnableLogging().SetElasticsearchStartTimeout(60)).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -64,7 +64,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public async Task Can_change_configuration()
         {
-            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(Console.WriteLine)).Ready())
+            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(Console.WriteLine).SetElasticsearchStartTimeout(60)).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -82,7 +82,7 @@ namespace ElasticsearchInside.Tests
         public async Task Can_log_output()
         {
             var logged = false;
-            using (var elasticsearch = new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(message => logged = true)))
+            using (var elasticsearch = new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(message => logged = true).SetElasticsearchStartTimeout(60)))
             {
                 await elasticsearch.Ready();
 
@@ -94,7 +94,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public async Task Can_install_plugin()
         {
-            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().AddPlugin(new Plugin("analysis-icu"))).Ready())
+            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().AddPlugin(new Plugin("analysis-icu")).SetElasticsearchStartTimeout(60)).Ready())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -114,7 +114,7 @@ namespace ElasticsearchInside.Tests
             Settings settings;
 
             ////Act
-            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(Console.WriteLine)).Ready())
+            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().LogTo(Console.WriteLine).SetElasticsearchStartTimeout(60)).Ready())
                 settings = (Settings)elasticsearch.Settings;
 
 
@@ -128,7 +128,7 @@ namespace ElasticsearchInside.Tests
         [Test]
         public void Has_specific_version()
         {
-            using (var elasticsearch = new Elasticsearch(i => i.SetPort(4444).EnableLogging()).ReadySync())
+            using (var elasticsearch = new Elasticsearch(i => i.SetPort(4444).EnableLogging().SetElasticsearchStartTimeout(60)).ReadySync())
             {
                 ////Arrange
                 var client = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
@@ -148,7 +148,7 @@ namespace ElasticsearchInside.Tests
             const string relativeSource = "TestFiles/testfile.txt";
             var sourceFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var sourcePath = Path.Combine(sourceFolder, relativeSource);
-            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().AddFile(relativeDestination, sourcePath)).Ready())
+            using (var elasticsearch = await new Elasticsearch(c => c.SetPort(4444).EnableLogging().AddFile(relativeDestination, sourcePath).SetElasticsearchStartTimeout(60)).Ready())
             {
                 var settings = (Settings)elasticsearch.Settings;
                 var folder = settings.ElasticsearchConfigPath;
