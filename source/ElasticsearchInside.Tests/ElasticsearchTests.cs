@@ -138,7 +138,7 @@ namespace ElasticsearchInside.Tests
                 var version = client.RootNodeInfo().Version.Number;
 
                 ////Assert
-                Assert.That(version, Is.EqualTo("6.6.0"));
+                Assert.That(version, Is.EqualTo("6.6.1"));
             }
         }
 
