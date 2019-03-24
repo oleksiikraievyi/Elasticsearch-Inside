@@ -108,7 +108,7 @@ namespace ElasticsearchInside.Tests
             }
         }
 
-        [Test/*, NUnit.Framework.Ignore("Failing on appveyor")*/]
+        [Test]
         public async Task Folder_is_removed_after_dispose()
         {
             ////Arrange
@@ -138,7 +138,7 @@ namespace ElasticsearchInside.Tests
                 var version = client.RootNodeInfo().Version.Number;
 
                 ////Assert
-                Assert.That(version, Is.EqualTo("6.5.4"));
+                Assert.That(version, Is.EqualTo("6.6.0"));
             }
         }
 
