@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
@@ -20,10 +20,6 @@
     <EmbeddedResource Include="Config\jvm.options" />
     <EmbeddedResource Include="Executables\elasticsearch.lz4" />
     <EmbeddedResource Include="Executables\LZ4PCL.dll" />
-  </ItemGroup>
-
- <ItemGroup>
-    <Reference Include="System.Net.Http" />
   </ItemGroup>
  <ItemGroup>
      <PackageReference Include="lz4net">

@@ -1,13 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
- <ItemGroup>
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
  <ItemGroup>
     <PackageReference Include="lz4net">
       <Version>1.0.15.93</Version>
