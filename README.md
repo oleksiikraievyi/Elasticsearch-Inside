@@ -112,8 +112,7 @@ Simply add the NuGet package:
 
 ## Requirements
 
-You'll need .NET Framework 4.7.2 or later to use the precompiled binaries.
-The project also works with .net core v2.2.
+This project is compiled using .net standard 2.0, which means this project will work with .NET Framework 4.6.1 (or later) or .net core 2.0 (or later).
 
 ## License
 
