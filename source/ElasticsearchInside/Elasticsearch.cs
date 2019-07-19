@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -11,8 +12,8 @@ using ElasticsearchInside.Config;
 using ElasticsearchInside.Executables;
 using ElasticsearchInside.Utilities;
 using ElasticsearchInside.Utilities.Archive;
-using LZ4PCL;
-using CompressionMode = LZ4PCL.CompressionMode;
+using LZ4;
+
 
 namespace ElasticsearchInside
 {
