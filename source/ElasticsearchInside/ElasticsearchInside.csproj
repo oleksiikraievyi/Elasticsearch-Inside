@@ -5,6 +5,23 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Config\jvm.options" />
+    <None Remove="Executables\elasticsearch.lz4" />
+    <None Remove="Executables\jre.lz4" />
+    <None Remove="Executables\LZ4PCL.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Executables\jre.lz4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Config\jvm.options" />
+    <EmbeddedResource Include="Executables\elasticsearch.lz4" />
+    <EmbeddedResource Include="Executables\LZ4PCL.dll" />
+  </ItemGroup>
+
  <ItemGroup>
     <Reference Include="System.Net.Http" />
   </ItemGroup>

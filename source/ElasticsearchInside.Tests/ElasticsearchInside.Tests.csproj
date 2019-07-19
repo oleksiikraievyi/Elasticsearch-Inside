@@ -25,4 +25,9 @@
  <ItemGroup>
    <ProjectReference Include="..\ElasticsearchInside\ElasticsearchInside.csproj" />
  </ItemGroup>
+ <ItemGroup>
+   <None Update="TestFiles\testfile.txt">
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+   </None>
+ </ItemGroup>
 </Project>
