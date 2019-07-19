@@ -100,7 +100,7 @@ Console output is by default being written to `Trace.Write` but can be customize
 ```c#
 using (new Elasticsearch(c => c.EnableLogging().LogTo(Console.WriteLine)))
 {
-                
+
 }
 ```
 
@@ -112,11 +112,12 @@ Simply add the NuGet package:
 
 ## Requirements
 
-You'll need .NET Framework 4.6.1 or later to use the precompiled binaries.
+You'll need .NET Framework 4.7.2 or later to use the precompiled binaries.
+The project also works with .net core v2.2.
 
 ## License
 
-Elasticsearch Inside is under the MIT license. 
+Elasticsearch Inside is under the MIT license.
 
 [Elasticsearch]: https://www.elastic.co/products/elasticsearch  "Elasticsearch"
 [nest]: https://github.com/elastic/elasticsearch-net  "Elasticsearch.Net & NEST"
