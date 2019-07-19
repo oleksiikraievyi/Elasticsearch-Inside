@@ -190,7 +190,7 @@ namespace ElasticsearchInside
             var started = Stopwatch.StartNew();
 
             using (var stream = GetType().Assembly.GetManifestResourceStream(typeof(RessourceTarget), name))
-            using (var decompresStream = new LZ4Stream(stream, CompressionMode.Decompress))
+            using (var decompresStream = new LZ4Stream(stream, LZ4StreamMode.Decompress))
             using (var archiveReader = new ArchiveReader(decompresStream))
                 await archiveReader.ExtractToDirectory(destination, cancellationToken).ConfigureAwait(false);
            
