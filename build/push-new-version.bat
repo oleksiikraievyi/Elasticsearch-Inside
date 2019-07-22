@@ -1,5 +1,4 @@
 @echo off
 del *.nupkg
-tools\nuget pack -exclude **\LZ4PCL.dll ..\source\ElasticsearchInside\ElasticsearchInside.csproj
+dotnet pack ..\source\ElasticsearchInside\ElasticsearchInside.csproj -c Release
 tools\nuget push *.nupkg -source https://www.nuget.org -Timeout 999999
- 
