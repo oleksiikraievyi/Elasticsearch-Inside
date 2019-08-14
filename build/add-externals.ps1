@@ -49,16 +49,9 @@ function DownloadJre{
         
     
     $doc = New-Object HtmlAgilityPack.HtmlDocument
-    $WebResponse = Invoke-WebRequest "http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html"
+    $WebResponse = Invoke-WebRequest "http://jdk.java.net/12/"
     $doc.LoadHtml($WebResponse.Content)
-
-    $lines = $doc.DocumentNode.InnerText -split '\r\n?|\n\r?'
-
-    $jreLine = $lines| Where { $_.Contains("windows-x64.tar.gz") } | Select -First 1
-
-    $jreLine = $jreLine.Substring($jreLine.IndexOf("http"), ($jreLine.LastIndexOf(".tar.gz")+7)-$jreLine.IndexOf("http"))
-
-    $downloadUrl =  New-Object System.Uri -ArgumentList @($jreLine)
+    $downloadUrl =  $doc.DocumentNode.SelectSingleNode("//a[contains(@href, 'windows')]").Attributes["href"].Value
     
     Write-Host "Downloading " $downloadUrl
 
@@ -69,14 +62,14 @@ function DownloadJre{
     Invoke-WebRequest $downloadPage -UseBasicParsing -UseDefaultCredentials -SessionVariable s | Out-Null
     $c = New-Object System.Net.Cookie("oraclelicense", "accept-securebackup-cookie", "/", ".oracle.com")
     $s.Cookies.Add($downloadPage, $c)
-    Invoke-WebRequest $downloadUrl -UseBasicParsing -UseDefaultCredentials -WebSession $s -OutFile .\temp\jre.tgz
+    Invoke-WebRequest $downloadUrl -UseBasicParsing -UseDefaultCredentials -WebSession $s -OutFile .\temp\jre.zip
     $ProgressPreference = $bak
     Write-Host "done." -ForegroundColor Green
 
     Write-Host "Extracting Java ..."
 
-    .\tools\7z.exe x .\temp\jre.tgz -otemp\
-    .\tools\7z.exe x .\temp\*.tar -otemp\
+    .\tools\7z.exe x .\temp\jre.zip -otemp\
+    #.\tools\7z.exe x .\temp\*.tar -otemp\
 }
 
 if ($PSVersionTable.PSVersion.Major -lt 3) {
@@ -88,7 +81,7 @@ Remove-Item ..\source\ElasticsearchInside\Executables\*.lz4
 DownloadJre
 
 $jreDir = Get-ChildItem -Recurse $directory | Where-Object { $_.PSIsContainer -and `
-   $_.Name.StartsWith("jre") } | Select-Object -First 1
+   $_.Name.StartsWith("jdk") } | Select-Object -First 1
 
 Write-Host "Encoding file " $jreDir.Fullname
 .\tools\LZ4Encoder.exe  $jreDir.Fullname ..\source\ElasticsearchInside\Executables\jre.lz4
