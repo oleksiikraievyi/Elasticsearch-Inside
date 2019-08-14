@@ -98,3 +98,4 @@ Write-Host "Encoding file " $elasticDir.Fullname
 
 Remove-Item temp -Force -Recurse 
 
+Pop-Location
