@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("ElasticsearchInside")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A fully embedded version of Elasticsearch for your integration tests.\r\n\r\nLicense: MIT")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ElasticsearchInside")]
