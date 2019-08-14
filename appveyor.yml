@@ -1,3 +1,7 @@
+environment:
+  nuget_key:
+    secure: nRTnNdFfpgWh2dk3i3d62uOl4ShGuKpH0VMaLAQ0P3S5G52hX/HNExz/y6gf142t
+
 # branches to build
 branches:
   # blacklist
@@ -25,6 +29,7 @@ platform: Any CPU
 configuration: Release
 
 before_build:
+  - ps: build\add-externals.ps1
   - nuget restore "source\Elasticsearch Inside.sln"
   
 build:
