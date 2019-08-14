@@ -1,10 +1,36 @@
-version: 1.0.{build}
+# branches to build
 branches:
-  only:
-  - master
+  # blacklist
+  except:
+    - gh-pages
+
+# Do not build on tags (GitHub and BitBucket)
+skip_tags: true
+
+# Build worker image (VM template)
 image: Visual Studio 2017
+
+# build cache to preserve files/folders between builds
+cache:
+  - packages
+
+# scripts that are called at very beginning, before repo cloning
+init:
+  - git config --global core.autocrlf input
+
+# build platform, i.e. x86, x64, Any CPU. This setting is optional.
+platform: Any CPU
+
+# build Configuration, i.e. Debug, Release, etc.
+configuration: Release
+
 before_build:
-- cmd: dotnet restore "source/Elasticsearch Inside.sln"
+  - nuget restore "source\Elasticsearch Inside.sln"
+  
 build:
-  project: source/Elasticsearch Inside.sln
-  verbosity: minimal
+  parallel: true                            # enable MSBuild parallel builds
+  project: source\Elasticsearch Inside.sln  # path to Visual Studio solution or project
+  publish_nuget: false                      # package projects with .nuspec files and push to artifacts
+  publish_nuget_symbols: false              # generate and publish NuGet symbol packages
+
+test:
