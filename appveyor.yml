@@ -1,6 +1,6 @@
 environment:
-  nuget_key: nRTnNdFfpgWh2dk3i3d62uOl4ShGuKpH0VMaLAQ0P3S5G52hX/HNExz/y6gf142t
-    secure: 
+  nuget_key: 
+    secure: nRTnNdFfpgWh2dk3i3d62uOl4ShGuKpH0VMaLAQ0P3S5G52hX/HNExz/y6gf142t
 
 # branches to build
 branches:
