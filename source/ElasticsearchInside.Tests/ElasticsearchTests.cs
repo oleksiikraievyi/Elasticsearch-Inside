@@ -188,6 +188,5 @@ namespace ElasticsearchInside.Tests
             folder.Refresh();
             Assert.That(!folder.Exists);
         }
-
     }
 }
