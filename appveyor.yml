@@ -40,4 +40,4 @@ build:
 
 test:
   assemblies:
-    - '**\*.tests.dll'
+    - '**\*.Tests.dll'
