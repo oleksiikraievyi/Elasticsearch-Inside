@@ -1,6 +1,6 @@
 environment:
-  nuget_key:
-    secure: nRTnNdFfpgWh2dk3i3d62uOl4ShGuKpH0VMaLAQ0P3S5G52hX/HNExz/y6gf142t
+  nuget_key: nRTnNdFfpgWh2dk3i3d62uOl4ShGuKpH0VMaLAQ0P3S5G52hX/HNExz/y6gf142t
+    secure: 
 
 # branches to build
 branches:
@@ -39,3 +39,5 @@ build:
   publish_nuget_symbols: false              # generate and publish NuGet symbol packages
 
 test:
+  assemblies:
+    - '**\*.tests.dll'

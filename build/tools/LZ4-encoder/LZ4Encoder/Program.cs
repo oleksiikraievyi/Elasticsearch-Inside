@@ -26,7 +26,7 @@ namespace LZ4Encoder
 
             // mem-stream needs to be here for this to work?
             using (var destinationStream = destination.OpenWrite())
-            using (var memStream = new MemoryStream())
+            using (var memStream = new FileStream(Path.GetTempFileName(), FileMode.Create))
             using (var lz4Stream = new LZ4Stream(destinationStream, CompressionMode.Compress, true, true))
             {
                 using (var archiveWriter = new ArchiveWriter(memStream, true))
