@@ -12,7 +12,7 @@ using ElasticsearchInside.Config;
 using ElasticsearchInside.Executables;
 using ElasticsearchInside.Utilities;
 using ElasticsearchInside.Utilities.Archive;
-using LZ4;
+using K4os.Compression.LZ4.Streams;
 
 
 namespace ElasticsearchInside
@@ -190,10 +190,23 @@ namespace ElasticsearchInside
             var started = Stopwatch.StartNew();
 
             using (var stream = GetType().Assembly.GetManifestResourceStream(typeof(RessourceTarget), name))
-            using (var decompresStream = new LZ4Stream(stream, LZ4StreamMode.Decompress))
-            using (var archiveReader = new ArchiveReader(decompresStream))
-                await archiveReader.ExtractToDirectory(destination, cancellationToken).ConfigureAwait(false);
-           
+            {
+                //using (var decompresStream = new LZ4Stream(stream, LZ4StreamMode.Decompress))
+                //{
+                //    using (var archiveReader = new ArchiveReader(decompresStream))
+                //    {
+                //        await archiveReader.ExtractToDirectory(destination, cancellationToken).ConfigureAwait(false);
+                //    }
+                //}
+                using (LZ4DecoderStream decompresStream = LZ4Stream.Decode(stream))
+                {
+                    using (var archiveReader = new ArchiveReader(decompresStream))
+                    {
+                        await archiveReader.ExtractToDirectory(destination, cancellationToken).ConfigureAwait(false);
+                    }
+                }
+            }
+
             Info($"Extracted {name.Split('.')[0]} in {started.Elapsed.TotalSeconds:#0.##} seconds");
         }
 

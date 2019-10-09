@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using K4os.Compression.LZ4.Streams;
 using LZ4Encoder.Utilities;
-using LZ4PCL;
-using CompressionMode = LZ4PCL.CompressionMode;
 
 namespace LZ4Encoder
 {
@@ -24,16 +23,29 @@ namespace LZ4Encoder
             if (destination.Exists)
                 throw new ApplicationException("Destination already exists");
 
+            /*
+             using (var source = File.OpenRead(filename))
+using (var target = LZ4Stream.Encode(File.Create(filename + ".lz4")))
+{
+    source.CopyTo(target);
+}
+             */
+
             // mem-stream needs to be here for this to work?
             using (var destinationStream = destination.OpenWrite())
-            using (var memStream = new MemoryStream())
-            using (var lz4Stream = new LZ4Stream(destinationStream, CompressionMode.Compress, true, true))
             {
-                using (var archiveWriter = new ArchiveWriter(memStream, true))
-                    archiveWriter.AddFiles(source);
+                using (var memStream = new MemoryStream())
+                {
+                    //using (var lz4Stream = new LZ4Stream(destinationStream, CompressionMode.Compress, true, true))
+                    using (var lz4Stream = LZ4Stream.Encode(destinationStream))
+                    {
+                        using (var archiveWriter = new ArchiveWriter(memStream, true))
+                            archiveWriter.AddFiles(source);
 
-                memStream.Position = 0;
-                memStream.CopyTo(lz4Stream);
+                        memStream.Position = 0;
+                        memStream.CopyTo(lz4Stream);
+                    }
+                }
             }
         }
 

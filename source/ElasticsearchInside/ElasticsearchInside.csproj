@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
@@ -8,6 +8,11 @@
     <PackageProjectUrl>https://github.com/poulfoged/Elasticsearch-Inside</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/poulfoged/elasticsearch-inside/master/logo.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/poulfoged/Elasticsearch-Inside</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Cgi.elasticsearch-inside</PackageId>
+    <Version>7.1.4</Version>
+    <AssemblyVersion>7.1.4.0</AssemblyVersion>
+    <FileVersion>7.1.4.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Config\jvm.options" />
@@ -22,8 +27,7 @@
     <EmbeddedResource Include="Executables\jre.lz4" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="lz4net">
-      <Version>1.0.15.93</Version>
-    </PackageReference>
+    <PackageReference Include="K4os.Compression.LZ4" Version="1.1.11" />
+    <PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.1.11" />
   </ItemGroup>
 </Project>
