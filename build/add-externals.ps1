@@ -73,11 +73,10 @@ function DownloadJre{
     #Invoke-WebRequest $downloadUrl -UseBasicParsing -UseDefaultCredentials -WebSession $s -OutFile .\temp\jre.tgz
 	
 	# Added download from third party repository because not able to download from oracle.com
-	$downloadUrl = https://github.com/frekele/oracle-java/releases/download/8u212-b10/jre-8u212-windows-x64.tar.gz
+	$downloadUrl = "https://github.com/frekele/oracle-java/releases/download/8u212-b10/jre-8u212-windows-x64.tar.gz"
 	Write-Host "Downloading " $downloadUrl
 	Invoke-WebRequest $downloadUrl -OutFile .\temp\jre.tgz
 	Write-Host "done." -ForegroundColor Green
-} 
 	
     $ProgressPreference = $bak
     Write-Host "done." -ForegroundColor Green
