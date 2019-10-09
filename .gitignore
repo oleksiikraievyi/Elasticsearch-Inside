@@ -195,3 +195,6 @@ FakesAssemblies/
 *.opt
 
 *.DS_Store
+
+# Compresed files
+*.lz4
