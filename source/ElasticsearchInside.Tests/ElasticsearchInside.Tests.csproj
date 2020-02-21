@@ -1,29 +1,25 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
- <ItemGroup>
-    <PackageReference Include="lz4net">
-      <Version>1.0.15.93</Version>
-    </PackageReference>
-    <PackageReference Include="NEST">
-      <Version>6.4.1</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>9.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="NUnit">
-      <Version>3.12.0</Version>
-    </PackageReference>
-  </ItemGroup>
- <ItemGroup>
-   <ProjectReference Include="..\ElasticsearchInside\ElasticsearchInside.csproj" />
- </ItemGroup>
- <ItemGroup>
-   <None Update="TestFiles\testfile.txt">
-     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-   </None>
- </ItemGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="lz4net" Version="1.0.15.93" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+        <PackageReference Include="NEST" Version="6.4.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+        <PackageReference Include="NUnit" Version="3.12.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ElasticsearchInside\ElasticsearchInside.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="TestFiles\testfile.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>

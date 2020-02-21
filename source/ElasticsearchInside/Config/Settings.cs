@@ -13,7 +13,7 @@ namespace ElasticsearchInside.Config
         private static readonly Random Random = new Random();
         internal readonly DirectoryInfo RootFolder = new DirectoryInfo(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N")));
         public DirectoryInfo ElasticsearchHomePath => new DirectoryInfo(Path.Combine(RootFolder.FullName, "es"));
-        public DirectoryInfo JvmPath => new DirectoryInfo(Path.Combine(RootFolder.FullName, "jre"));
+        public DirectoryInfo JvmPath => new DirectoryInfo(Path.Combine(ElasticsearchHomePath.FullName, "jdk"));
         public DirectoryInfo ElasticsearchConfigPath => new DirectoryInfo(Path.Combine(ElasticsearchHomePath.FullName, "config"));
         public IDictionary<string, string> ElasticsearchParameters { get; } = new Dictionary<string, string>();
         public IList<string> JVMParameters { get; private set; } = new List<string>();
