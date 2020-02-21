@@ -2,7 +2,7 @@
 
 # Elasticsearch Inside
 
-## Project looking for new maintainer
+## Project looking for new maintainer. Contact me.
 
 Many thanks to [DJPorv](https://github.com/DJPorv) who created the first version of this.
 
