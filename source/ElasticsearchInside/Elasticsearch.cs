@@ -124,11 +124,10 @@ namespace ElasticsearchInside
 
         private async Task SetupEnvironment(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var jreTask = Task.Run(() => ExtractEmbeddedLz4Stream("jre.lz4", _settings.JvmPath, cancellationToken), cancellationToken);
             var esTask = Task.Run(() => ExtractEmbeddedLz4Stream("elasticsearch.lz4", _settings.ElasticsearchHomePath, cancellationToken), cancellationToken)
                 .ContinueWith(_ => _settings.WriteSettings(), cancellationToken);
 
-            await Task.WhenAll(jreTask, esTask).ConfigureAwait(false);
+            await esTask.ConfigureAwait(false);
         }
 
 
